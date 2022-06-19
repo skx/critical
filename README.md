@@ -26,21 +26,31 @@ pass the name of a file:
 
 ## Features
 
-Allows only basic operations:
+Read the file [input.tcl](input.tcl) to get a feel for the language, but in-brief you've got the following facilities available:
 
 * Mathematical operations for `expr`
   * `+` `-` `/` `*` `<` `>` `<=` `>=`
   * Integer support only.  Sigh.
-* Simple output via `puts`
+* Output to STDOUT via `puts`.
 * Inline command expansion.
 * Inline variable expansion.
 
 Badly implemented features:
 
-* if
-* while
-* block support `{` `}`
+* `if`
+* `while`
+* block support `{` `}` in general is missing, and only "supported" for `if`/`while`.
 
 Missing features:
 
-* No real parser
+* A real parser
+
+Adding a real parser would allow fixing the block-support for the general-case, and also making nested things more robust.
+
+
+## Bugs?
+
+Yeah I'm not surprised.  Please feel free to open a new issue **with your example** included so I can see how to fix it.
+
+
+Steve
