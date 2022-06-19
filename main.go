@@ -57,12 +57,13 @@ func set(name string, value string) string {
 //
 // If the variable doesn't exist it is assumed to have a zero value,
 // such that "incr unknown" returns 1.
-func incr(name string) string {
+func incr(name string, value string) string {
 
+	offset, _ := strconv.Atoi(value)
 	val, ok := vars[name]
 	if ok {
 		cur, _ := strconv.Atoi(val)
-		cur++
+		cur += offset
 		vars[name] = fmt.Sprintf("%d", cur)
 	} else {
 		vars[name] = "1"
@@ -74,12 +75,13 @@ func incr(name string) string {
 //
 // If the variable does not exist it is assumed to contain a
 // 0-value, so "decr unknown" results in -1.
-func decr(name string) string {
+func decr(name string, value string) string {
+	offset, _ := strconv.Atoi(value)
 
 	val, ok := vars[name]
 	if ok {
 		cur, _ := strconv.Atoi(val)
-		cur--
+		cur -= offset
 		vars[name] = fmt.Sprintf("%d", cur)
 		return vars[name]
 	} else {
@@ -338,10 +340,18 @@ func Eval(input []string) (string, error) {
 				out = set(fields[1], "")
 			}
 		case "incr":
-			out = incr(fields[1])
+			if len(fields) > 2 {
+				out = incr(fields[1], fields[2])
+			} else {
+				out = incr(fields[1], "1")
+			}
 
 		case "decr":
-			out = decr(fields[1])
+			if len(fields) > 2 {
+				out = decr(fields[1], fields[2])
+			} else {
+				out = decr(fields[1], "1")
+			}
 
 		case "puts":
 			// A bit horrid

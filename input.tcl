@@ -33,8 +33,9 @@ if { $x } { puts "X is set - This is a bug" } else { puts "X is NOT set" }
 //
 // Horrid
 //
-set i 1
+set i   1
 set max 10
+set sum 0
 
 // Because we don't have a proper parser so we can't handle a newline inside
 // our block, so we have to fake it via the use of the continuation-line
@@ -46,7 +47,12 @@ set max 10
 // i.e. { puts "foo" incr bar } would actually invoke "puts" with the
 // text '"foo" incr bar', meaning the increment would never execute and
 // our loop would last forever.
+//
+
 while { expr $i <= $max } { \
    puts "  Loop $i" \
+   incr sum $i \
    incr i  \
 }
+
+puts "Sum of 1..10 (==(10x11)/2): $sum"
