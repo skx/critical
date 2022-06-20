@@ -334,7 +334,6 @@ func (l *Lexer) readNestedPair(open rune, close rune) (string, error) {
 
 	}
 
-	return out, nil
 }
 
 // readVariable returns a variable
