@@ -108,15 +108,18 @@ func (l *Lexer) nextTokenReal() token.Token {
 	// OK it wasn't a simple type
 	switch l.ch {
 
+	case rune(']'):
+		tok.Type = token.ILLEGAL
+		tok.Literal = "Closing ']' without opening one"
+
+	case rune('}'):
+		tok.Type = token.ILLEGAL
+		tok.Literal = "Closing '}' without opening one"
+
 	case rune('$'):
-		val, err := l.readVariable()
-		if err == nil {
-			tok.Type = token.VARIABLE
-			tok.Literal = val
-		} else {
-			tok.Type = token.ILLEGAL
-			tok.Literal = err.Error()
-		}
+		val := l.readVariable()
+		tok.Type = token.VARIABLE
+		tok.Literal = val
 	case rune('"'):
 		str, err := l.readString()
 
@@ -149,7 +152,7 @@ func (l *Lexer) nextTokenReal() token.Token {
 		}
 	default:
 		// is it a number?
-		if l.ch == '-' || isDigit(l.ch) {
+		if (l.ch == '-' && isDigit(l.peekChar())) || isDigit(l.ch) {
 			// Read it.
 			tok = l.readDecimal()
 			return tok
@@ -309,6 +312,7 @@ func (l *Lexer) readNestedPair(open rune, close rune) (string, error) {
 
 		// opening a new one?
 		if l.ch == open {
+			out = out + string(l.ch)
 			depth++
 			continue
 		}
@@ -320,6 +324,9 @@ func (l *Lexer) readNestedPair(open rune, close rune) (string, error) {
 			// back to zero then we're at the end of this one
 			if depth == 0 {
 				return out, nil
+			} else {
+				out = out + string(l.ch)
+
 			}
 
 			continue
@@ -338,7 +345,7 @@ func (l *Lexer) readNestedPair(open rune, close rune) (string, error) {
 
 // readVariable returns a variable
 // 16.
-func (l *Lexer) readVariable() (string, error) {
+func (l *Lexer) readVariable() string {
 
 	str := string(l.ch)
 
@@ -346,14 +353,14 @@ func (l *Lexer) readVariable() (string, error) {
 		l.readChar()
 
 		if l.ch == rune(0) {
-			return str, nil
+			return str
 		}
 
 		if l.ch == '$' || isLetter(l.ch) {
 			str += string(l.ch)
 		} else {
 			l.rewind()
-			return str, nil
+			return str
 		}
 	}
 }

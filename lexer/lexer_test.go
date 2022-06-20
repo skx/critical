@@ -10,19 +10,51 @@ import (
 
 // TestEmpty tests a couple of different empty strings
 func TestEmpty(t *testing.T) {
-	empty := []string{
-		"",
+
+	// empty string
+	l := New("")
+
+	// should return EOF for N times
+	i := 0
+
+	for i < 5 {
+		tok := l.NextToken()
+		if tok.Type != token.EOF {
+			t.Fatalf("expected EOF, got %v", tok)
+		}
+
+		p := l.peekChar()
+		if p != rune(0) {
+			t.Fatalf("peeking past EOF failed")
+		}
+
+		i++
 	}
+}
 
-	for _, line := range empty {
-		lexer := New(line)
-		result := lexer.NextToken()
+// TestVariable does simple variable testing.
+func TestVariable(t *testing.T) {
+	input := `$a+$b`
 
-		if result.Type != token.EOF {
-			t.Fatalf("First token of empty input is %v", result)
+	tests := []struct {
+		expectedType    token.Type
+		expectedLiteral string
+	}{
+		{token.VARIABLE, "$a"},
+		{token.IDENT, "+"},
+		{token.VARIABLE, "$b"},
+		{token.EOF, ""},
+	}
+	l := New(input)
+	for i, tt := range tests {
+		tok := l.NextToken()
+		if tok.Type != tt.expectedType {
+			t.Fatalf("tests[%d] - tokentype wrong, expected=%q, got=%q: %v", i, tt.expectedType, tok.Type, tok)
+		}
+		if tok.Literal != tt.expectedLiteral {
+			t.Fatalf("tests[%d] - Literal wrong, expected=%q, got=%q: %v", i, tt.expectedLiteral, tok.Literal, tok)
 		}
 	}
-
 }
 
 // TestEscape ensures that strings have escape-characters processed.
@@ -137,6 +169,50 @@ func TestParseNumber(t *testing.T) {
 
 }
 
+// TestIllegal looks for some illegal inputs
+func TestIllegal(t *testing.T) {
+	illegals := []string{
+		"{",
+		"}",
+		"[",
+		"]",
+		"\"steve",
+	}
+
+	for _, test := range illegals {
+		lex := New(test)
+
+		tok := lex.NextToken()
+
+		if tok.Type != token.ILLEGAL {
+			t.Fatalf("expected ILLEGAL, got %v", tok)
+		}
+	}
+}
+
+func TestNested(t *testing.T) {
+	input := `[expr 1 + [expr 2+3]]`
+
+	tests := []struct {
+		expectedType    token.Type
+		expectedLiteral string
+	}{
+		{token.EVAL, "[expr 1 + [expr 2+3]]"},
+		{token.EOF, ""},
+	}
+	l := New(input)
+	for i, tt := range tests {
+		tok := l.NextToken()
+		if tok.Type != tt.expectedType {
+			t.Fatalf("tests[%d] - tokentype wrong, expected=%q, got=%q: %v", i, tt.expectedType, tok.Type, tok)
+		}
+		if tok.Literal != tt.expectedLiteral {
+			t.Fatalf("tests[%d] - Literal wrong, expected=%q, got=%q: %v", i, tt.expectedLiteral, tok.Literal, tok)
+		}
+
+	}
+}
+
 // TestInteger tests that we parse integers appropriately.
 //
 // This includes handling the unary +/- prefixes which might be present.
@@ -177,14 +253,14 @@ func TestInteger(t *testing.T) {
 
 func TestEval(t *testing.T) {
 
-	input := `puts [expr 1 + 3]`
+	input := `puts [expr 1 + [ expr 2 + 3] ]`
 
 	tests := []struct {
 		expectedType    token.Type
 		expectedLiteral string
 	}{
 		{token.IDENT, "puts"},
-		{token.EVAL, "[expr 1 + 3]"},
+		{token.EVAL, "[expr 1 + [ expr 2 + 3] ]"},
 		{token.EOF, ""},
 	}
 	l := New(input)
