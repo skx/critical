@@ -307,27 +307,30 @@ func expr(i *Interpreter, args []string) (string, error) {
 	case "<":
 		if aV < bV {
 			return "1", nil
-		} else {
-			return "0", nil
 		}
+		return "0", nil
+	case "==":
+		if aV == bV {
+			return "1", nil
+		}
+		return "0", nil
 	case "<=":
 		if aV <= bV {
 			return "1", nil
-		} else {
-			return "0", nil
 		}
+		return "0", nil
+
 	case ">":
 		if aV > bV {
 			return "1", nil
-		} else {
-			return "0", nil
 		}
+		return "0", nil
+
 	case ">=":
 		if aV >= bV {
 			return "1", nil
-		} else {
-			return "0", nil
 		}
+		return "0", nil
 	}
 	return "", fmt.Errorf("unknown operation %s %s %s", args[0], op, args[2])
 }
@@ -366,11 +369,11 @@ func iff(i *Interpreter, args []string) (string, error) {
 	// A non-false result means we run the "true branch"
 	if out != "" && out != "0" {
 		return i.Eval(pass)
-	} else {
-		// If we have a "false branch", then execute it
-		if fail != "" {
-			return i.Eval(fail)
-		}
+	}
+
+	// If we have a "false branch", then execute it
+	if fail != "" {
+		return i.Eval(fail)
 	}
 
 	return "", nil
@@ -467,8 +470,11 @@ func while(i *Interpreter, args []string) (string, error) {
 
 		// run the body
 		out, err = i.Eval(body)
+		if err != nil {
+			return "", err
+		}
 
-		// repeat the
+		// repeat the conditional-test ahead of repeating the body
 		tmp, err = i.Eval(cond)
 		if err != nil {
 			return "", err
