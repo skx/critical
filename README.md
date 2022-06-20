@@ -11,8 +11,7 @@ Build in the usual way, for example:
 $ go build .
 ```
 
-Execute with zero arguments to run the embedded examples, otherwise
-pass the name of a file:
+Execute with the name of a TCL-file to execute:
 
 ```sh
     $ ./critical input.tcl
@@ -33,19 +32,23 @@ Read the file [input.tcl](input.tcl) to get a feel for the language, but in-brie
   * Integer support only.  Sigh.
 * Output to STDOUT via `puts`.
 * Inline command expansion.
+  * Including inside strings.
 * Inline variable expansion.
+  * Including inside strings.
 
 Badly implemented features:
 
-* `if`
-* `while`
-* block support `{` `}` in general is missing, and only "supported" for `if`/`while`.
+* Inline command expansion only works to one level
+  * This is fine: `puts [expr 3 + 3]`
+  * This fails: `puts [expr 3 + [expr 1 + 2]]`
+* This fails as the spaces around `+` are necessary:
+  * `puts [expr $a+$b]`
+* Inline expansion swallows a character
+  * `puts "[expr 3 + 3]ab` shows `3b` - where did `a` go?
 
-Missing features:
+Missing features?
 
-* A real parser
-
-Adding a real parser would allow fixing the block-support for the general-case, and also making nested things more robust.
+* The ability to define `procs`.
 
 
 ## Bugs?
