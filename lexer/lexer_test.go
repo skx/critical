@@ -197,7 +197,7 @@ func TestNested(t *testing.T) {
 		expectedType    token.Type
 		expectedLiteral string
 	}{
-		{token.EVAL, "[expr 1 + [expr 2+3]"},
+		{token.EVAL, "[expr 1 + [expr 2+3]]"},
 		{token.EOF, ""},
 	}
 	l := New(input)
@@ -253,14 +253,14 @@ func TestInteger(t *testing.T) {
 
 func TestEval(t *testing.T) {
 
-	input := `puts [expr 1 + 3]`
+	input := `puts [expr 1 + [ expr 2 + 3] ]`
 
 	tests := []struct {
 		expectedType    token.Type
 		expectedLiteral string
 	}{
 		{token.IDENT, "puts"},
-		{token.EVAL, "[expr 1 + 3]"},
+		{token.EVAL, "[expr 1 + [ expr 2 + 3] ]"},
 		{token.EOF, ""},
 	}
 	l := New(input)

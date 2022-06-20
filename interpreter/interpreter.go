@@ -4,7 +4,7 @@ package interpreter
 
 import (
 	"fmt"
-	"strconv"
+	"regexp"
 
 	"github.com/skx/critical/environment"
 	"github.com/skx/critical/parser"
@@ -202,288 +202,39 @@ func (i *Interpreter) Eval(str string) (string, error) {
 	return out, nil
 }
 
+// expandEval handles the expansion of "[ FOO ]" blocks.
+//
+// It now handles nested values, such that this works:
+//
+//    puts [ expr 1 + [ expr 2 + 3 ] ]
+//
 func (i *Interpreter) expandEval(str string) string {
-	ret := ""
-	idx := 0
 
-	for idx < len(str) {
-		c := str[idx]
+	r := regexp.MustCompile(`^(.*)\[([^\]]+)\](.*)$`)
 
-		// OK we have a nested thing.
-		if c == '[' {
-			tmp := ""
-			closed := false
-			idx++
-			for idx < len(str) && !closed {
-				c = str[idx]
-				idx++
-				if c == ']' {
-					out, _ := i.Eval(tmp)
-					ret += out
-					closed = true
+	out := r.FindStringSubmatch(str)
+	for len(out) > 1 {
 
-				} else {
-					tmp += string(c)
-				}
-			}
+		// The pieces of the match
+		before := out[1]
+		match := out[2]
+		after := out[3]
 
-		} else {
-			ret += string(c)
-		}
-		idx++
+		// Evaluate the middle.
+		eval, _ := i.Eval(match)
+
+		// Now update our string.
+		str = before + eval + after
+
+		out = r.FindStringSubmatch(str)
 	}
-	return ret
+
+	return str
 }
 
 //
 // Built-In functions here ..
 //
-
-// comment is a function which ignores comments "// xx" or "# xxxx".
-func comment(i *Interpreter, args []string) (string, error) {
-	return "", nil
-}
-
-// decr is the golang implementation of the TCL `decr` function.
-func decr(i *Interpreter, args []string) (string, error) {
-
-	if len(args) != 1 && len(args) != 2 {
-		return "", fmt.Errorf("decr takes one or two arguments")
-	}
-
-	// Name of variable we're decreasing
-	name := args[0]
-
-	// Get the current value of the variable
-	// if not found the value is zero
-	cur, ok := i.environment.Get(name)
-	if !ok {
-		cur = "0"
-	}
-
-	// How much to decrease by?
-	decrease := 1
-	if len(args) == 2 {
-		var err error
-		decrease, err = strconv.Atoi(args[1])
-		if err != nil {
-			return "", nil
-		}
-	}
-
-	orig, _ := strconv.Atoi(cur)
-	orig -= decrease
-	i.environment.Set(name, fmt.Sprintf("%d", orig))
-
-	return fmt.Sprintf("%d", orig), nil
-
-}
-
-// expr is the golang implementation of the TCL `expr` function.
-func expr(i *Interpreter, args []string) (string, error) {
-	if len(args) != 3 {
-		return "", fmt.Errorf("expr requires three arguments, got %d", len(args))
-	}
-
-	aV, eA := strconv.Atoi(args[0])
-	if eA != nil {
-		return "", eA
-	}
-	op := args[1]
-	bV, eB := strconv.Atoi(args[2])
-	if eB != nil {
-		return "", eB
-	}
-
-	switch op {
-	case "+":
-		return (fmt.Sprintf("%f", float64(aV+bV))), nil
-	case "-":
-		return (fmt.Sprintf("%f", float64(aV-bV))), nil
-	case "*":
-		return (fmt.Sprintf("%f", float64(aV*bV))), nil
-	case "/":
-		return (fmt.Sprintf("%f", float64(aV/bV))), nil
-	case "<":
-		if aV < bV {
-			return "1", nil
-		}
-		return "0", nil
-	case "==":
-		if aV == bV {
-			return "1", nil
-		}
-		return "0", nil
-	case "<=":
-		if aV <= bV {
-			return "1", nil
-		}
-		return "0", nil
-
-	case ">":
-		if aV > bV {
-			return "1", nil
-		}
-		return "0", nil
-
-	case ">=":
-		if aV >= bV {
-			return "1", nil
-		}
-		return "0", nil
-	}
-	return "", fmt.Errorf("unknown operation %s %s %s", args[0], op, args[2])
-}
-
-// iff is the golang implementation of the TCL `if` function.
-func iff(i *Interpreter, args []string) (string, error) {
-
-	// Test arguments
-	if len(args) != 2 && len(args) != 4 {
-		return "", fmt.Errorf("if accepts three arguments, or five.  Got %d", len(args))
-	}
-
-	cond := args[0]
-	pass := args[1]
-	fail := ""
-
-	if len(args) == 4 {
-		fail = args[3]
-	}
-
-	//
-	// evaluate the condition.
-	//
-	// if true
-	//   eval(pass)
-	// else
-	//   if fail != ""
-	//     eval(fail)
-	//
-
-	out, err := i.Eval(cond)
-	if err != nil {
-		return "", err
-	}
-
-	// A non-false result means we run the "true branch"
-	if out != "" && out != "0" {
-		return i.Eval(pass)
-	}
-
-	// If we have a "false branch", then execute it
-	if fail != "" {
-		return i.Eval(fail)
-	}
-
-	return "", nil
-}
-
-// incr is the golang implementation of the TCL `incr` function.
-func incr(i *Interpreter, args []string) (string, error) {
-
-	if len(args) != 1 && len(args) != 2 {
-		return "", fmt.Errorf("incr takes one or two arguments")
-	}
-
-	// Name of variable we're increasing
-	name := args[0]
-
-	// Get the current value of the variable
-	// if not found the value is zero
-	cur, ok := i.environment.Get(name)
-	if !ok {
-		cur = "0"
-	}
-
-	// How much to increase by?
-	increase := 1
-	if len(args) == 2 {
-		var err error
-		increase, err = strconv.Atoi(args[1])
-		if err != nil {
-			return "", nil
-		}
-	}
-
-	orig, _ := strconv.Atoi(cur)
-	orig += increase
-	i.environment.Set(name, fmt.Sprintf("%d", orig))
-
-	return fmt.Sprintf("%d", orig), nil
-}
-
-// puts is the golang implementation of the TCL `puts` function.
-func puts(i *Interpreter, args []string) (string, error) {
-	if len(args) != 1 {
-		return "", fmt.Errorf("puts only accepts one argument, got %d", len(args))
-	}
-
-	fmt.Printf("%s\n", args[0])
-	return args[0], nil
-}
-
-// set is the golang implementation of the TCL `set` function.
-func set(i *Interpreter, args []string) (string, error) {
-	if len(args) != 1 && len(args) != 2 {
-		return "", fmt.Errorf("set accepts one or two arguments, got %d", len(args))
-	}
-
-	// name of the value we're getting/setting
-	name := args[0]
-
-	// If we have a value, then set it and return it.
-	if len(args) == 2 {
-		value := args[1]
-		i.environment.Set(name, value)
-		return value, nil
-	}
-
-	// otherwise return the current value
-	cur, _ := i.environment.Get(name)
-	return cur, nil
-}
-
-// while is the golang implementation of the TCL `while` function.
-func while(i *Interpreter, args []string) (string, error) {
-
-	// Test arguments
-	if len(args) != 2 {
-		return "", fmt.Errorf("while accepts only two arguments.  Got %d", len(args))
-	}
-
-	cond := args[0]
-	body := args[1]
-
-	out := ""
-	var err error
-	tmp := ""
-
-	// Run the conditional once
-	tmp, err = i.Eval(cond)
-	if err != nil {
-		return "", err
-	}
-
-	// Run the body, and repeat until the conditional fails
-	for tmp != "0" && tmp != "" {
-
-		// run the body
-		out, err = i.Eval(body)
-		if err != nil {
-			return "", err
-		}
-
-		// repeat the conditional-test ahead of repeating the body
-		tmp, err = i.Eval(cond)
-		if err != nil {
-			return "", err
-		}
-	}
-
-	// Return the last statement from within the body
-	return out, nil
-}
 
 func isLetter(ch byte) bool {
 	return ((ch >= 'a' && ch <= 'z') ||

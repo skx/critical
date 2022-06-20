@@ -38,9 +38,6 @@ Read the file [input.tcl](input.tcl) to get a feel for the language, but in-brie
 
 Badly implemented features:
 
-* Inline command expansion only works to one level
-  * This is fine: `puts [expr 3 + 3]`
-  * This fails: `puts [expr 3 + [expr 1 + 2]]`
 * This fails as the spaces around `+` are necessary:
   * `puts [expr $a+$b]`
 * Inline expansion swallows a character

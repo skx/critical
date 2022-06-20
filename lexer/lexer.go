@@ -152,7 +152,7 @@ func (l *Lexer) nextTokenReal() token.Token {
 		}
 	default:
 		// is it a number?
-		if l.ch == '-' || isDigit(l.ch) {
+		if (l.ch == '-' && isDigit(l.peekChar())) || isDigit(l.ch) {
 			// Read it.
 			tok = l.readDecimal()
 			return tok
@@ -324,6 +324,9 @@ func (l *Lexer) readNestedPair(open rune, close rune) (string, error) {
 			// back to zero then we're at the end of this one
 			if depth == 0 {
 				return out, nil
+			} else {
+				out = out + string(l.ch)
+
 			}
 
 			continue
