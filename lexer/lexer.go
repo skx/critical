@@ -108,6 +108,14 @@ func (l *Lexer) nextTokenReal() token.Token {
 	// OK it wasn't a simple type
 	switch l.ch {
 
+	case rune(']'):
+		tok.Type = token.ILLEGAL
+		tok.Literal = "Closing ']' without opening one"
+
+	case rune('}'):
+		tok.Type = token.ILLEGAL
+		tok.Literal = "Closing '}' without opening one"
+
 	case rune('$'):
 		val, err := l.readVariable()
 		if err == nil {
