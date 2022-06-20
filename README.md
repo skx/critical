@@ -51,6 +51,29 @@ Missing features?
 * The ability to define `procs`.
 
 
+## Testing
+
+Most of the internal packages have high test-coverage, which can be exercised as you would expect:
+
+```sh
+$ go test ./...
+```
+
+In addition to the standard/static testing there are fuzz-based testers for the lexer and parser.  To run these run one of the following two sets of commands:
+
+* **NOTE**: The fuzz-tester requires the use of golang version 1.18 or higher.
+
+
+```sh
+cd parser
+go test -fuzztime=300s -parallel=1 -fuzz=FuzzParser -v
+```
+
+```sh
+cd lexer
+go test -fuzztime=300s -parallel=1 -fuzz=FuzzLexer -v
+
+```
 ## Bugs?
 
 Yeah I'm not surprised.  Please feel free to open a new issue **with your example** included so I can see how to fix it.
