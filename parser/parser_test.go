@@ -17,7 +17,9 @@ func TestPuts(t *testing.T) {
 }
 
 func TestSeperator(t *testing.T) {
-	input := `puts "Hello"; puts "World"`
+	input := `puts "Hello";
+
+puts "World"`
 
 	p := New(input)
 	out, err := p.Parse()
