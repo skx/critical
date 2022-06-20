@@ -26,7 +26,6 @@ import (
 // Lexer is used as the lexer for our deployr "language".
 type Lexer struct {
 	debug        bool                 // dump tokens as they're read?
-	decimal      bool                 // convert numbers to decimal?
 	position     int                  // current character position
 	readPosition int                  // next character position
 	ch           rune                 // current character
@@ -335,7 +334,6 @@ func (l *Lexer) readNestedPair(open rune, close rune) (string, error) {
 
 	}
 
-	return out, nil
 }
 
 // readVariable returns a variable
