@@ -1,5 +1,6 @@
 [![GoDoc](https://img.shields.io/static/v1?label=godoc&message=reference&color=blue)](https://pkg.go.dev/github.com/skx/critical)
 [![Go Report Card](https://goreportcard.com/badge/github.com/skx/critical)](https://goreportcard.com/report/github.com/skx/critical)
+[![license](https://img.shields.io/github/license/skx/critical.svg)](https://github.com/skx/critical/blob/master/LICENSE)
 
 
 # criTiCaL
