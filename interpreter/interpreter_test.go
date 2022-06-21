@@ -27,26 +27,26 @@ func TestEval(t *testing.T) {
 	}
 
 	tests := []TestCase{
-		TestCase{Input: `"Steve"`, Output: `Steve`},
-		TestCase{Input: `"33"`, Output: `33`},
-		TestCase{Input: `expr 3 + 3`, Output: `6`},
-		TestCase{Input: `expr 3 * 3`, Output: `9`},
-		TestCase{Input: `expr 3 - 1`, Output: `2`},
-		TestCase{Input: `expr 3 / 3`, Output: `1`},
-		TestCase{Input: `expr 3 <= 3`, Output: `1`},
-		TestCase{Input: `expr 4 <= 3`, Output: `0`},
+		{Input: `"Steve"`, Output: `Steve`},
+		{Input: `"33"`, Output: `33`},
+		{Input: `expr 3 + 3`, Output: `6`},
+		{Input: `expr 3 * 3`, Output: `9`},
+		{Input: `expr 3 - 1`, Output: `2`},
+		{Input: `expr 3 / 3`, Output: `1`},
+		{Input: `expr 3 <= 3`, Output: `1`},
+		{Input: `expr 4 <= 3`, Output: `0`},
 
-		TestCase{Input: `expr 3 < 3`, Output: `0`},
-		TestCase{Input: `expr 1 < 3`, Output: `1`},
+		{Input: `expr 3 < 3`, Output: `0`},
+		{Input: `expr 1 < 3`, Output: `1`},
 
-		TestCase{Input: `expr 3 > 3`, Output: `0`},
-		TestCase{Input: `expr 5 > 3`, Output: `1`},
+		{Input: `expr 3 > 3`, Output: `0`},
+		{Input: `expr 5 > 3`, Output: `1`},
 
-		TestCase{Input: `expr 3 >= 3`, Output: `1`},
-		TestCase{Input: `expr 1 >= 3`, Output: `0`},
+		{Input: `expr 3 >= 3`, Output: `1`},
+		{Input: `expr 1 >= 3`, Output: `0`},
 
-		TestCase{Input: `expr 1 == 3`, Output: `0`},
-		TestCase{Input: `expr 2 == 2`, Output: `1`},
+		{Input: `expr 1 == 3`, Output: `0`},
+		{Input: `expr 2 == 2`, Output: `1`},
 	}
 
 	for _, test := range tests {
