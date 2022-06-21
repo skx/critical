@@ -1,30 +1,44 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
 
 	"github.com/skx/critical/interpreter"
+	"github.com/skx/critical/stdlib"
 )
 
 func main() {
 
+	noStdlib := flag.Bool("no-stdlib", false, "Disable the (embedded) standard library")
+	flag.Parse()
+
 	// Ensure we have a file to execute.
-	if len(os.Args) < 2 {
+	if len(flag.Args()) < 1 {
 		fmt.Printf("Usage: critical file.tcl\n")
 		return
 	}
 
-	// Read the file
-	data, err := ioutil.ReadFile(os.Args[1])
+	// Read our standard library
+	stdlib := stdlib.StdlibContents()
+
+	// Read the file the user wanted
+	data, err := ioutil.ReadFile(flag.Args()[0])
 	if err != nil {
 		fmt.Printf("error reading file %s:%s\n", os.Args[0], err)
 		return
 	}
 
+	// Join the two inputs, unless we shouldn't.
+	input := string(data)
+	if !*noStdlib {
+		input = string(stdlib) + "\n" + input
+	}
+
 	// Create the interpreter
-	interpreter := interpreter.New(string(data))
+	interpreter := interpreter.New(input)
 
 	// Evaluate the input
 	out, err := interpreter.Evaluate()

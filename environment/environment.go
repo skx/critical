@@ -63,6 +63,7 @@ func (e *Environment) Set(name string, value string) {
 
 		if ok {
 			e.parent.Set(name, value)
+			return
 		}
 	}
 
