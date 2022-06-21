@@ -7,7 +7,7 @@ func iff(i *Interpreter, args []string) (string, error) {
 
 	// Test arguments
 	if len(args) != 2 && len(args) != 4 {
-		return "", fmt.Errorf("if accepts three arguments, or five.  Got %d", len(args))
+		return "", fmt.Errorf("if accepts two arguments, or four.  Got %d", len(args))
 	}
 
 	cond := args[0]

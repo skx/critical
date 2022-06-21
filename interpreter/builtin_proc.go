@@ -7,6 +7,7 @@ import (
 
 // proc is the golang implemention of the TCL `proc` function
 func proc(i *Interpreter, args []string) (string, error) {
+
 	if len(args) != 3 {
 		return "", fmt.Errorf("proc only accepts three argument, got %d", len(args))
 	}

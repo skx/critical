@@ -28,7 +28,18 @@ func while(i *Interpreter, args []string) (string, error) {
 
 		// run the body
 		out, err = i.Eval(body)
-		if err != nil {
+
+		// We might have BREAK or CONTINUE within the loop.
+		if err == errBreak {
+
+			// GOTO Considered useful
+			goto outside
+
+		} else if err == errContinue {
+
+			// Nop
+
+		} else if err != nil {
 			return "", err
 		}
 
@@ -38,7 +49,7 @@ func while(i *Interpreter, args []string) (string, error) {
 			return "", err
 		}
 	}
-
+outside:
 	// Return the last statement from within the body
 	return out, nil
 }
