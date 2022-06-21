@@ -70,12 +70,14 @@ func New(source string) *Interpreter {
 	i.builtins["\\n"] = HostFunction{function: comment}
 
 	// These are real primitives
+	i.builtins["break"] = HostFunction{function: breakFn}
+	i.builtins["continue"] = HostFunction{function: continueFn}
 	i.builtins["decr"] = HostFunction{function: decr}
 	i.builtins["expr"] = HostFunction{function: expr}
 	i.builtins["if"] = HostFunction{function: iff}
 	i.builtins["incr"] = HostFunction{function: incr}
-	i.builtins["puts"] = HostFunction{function: puts}
 	i.builtins["proc"] = HostFunction{function: proc}
+	i.builtins["puts"] = HostFunction{function: puts}
 	i.builtins["return"] = HostFunction{function: returnFn}
 	i.builtins["set"] = HostFunction{function: set}
 	i.builtins["while"] = HostFunction{function: while}
@@ -168,8 +170,17 @@ func (i *Interpreter) Evaluate() (string, error) {
 			out, e = fn.function(i, args)
 
 			// If the function returned a value then use that.
-			if e == returnError {
+			if e == errReturn {
 				continue
+			}
+
+			// break and continue will be handled within the
+			// while-handler.
+			//
+			// TODO if we ever support the `for` function
+			// then that will need to be handled too.
+			if e == errBreak || e == errContinue {
+				return out, e
 			}
 
 			if e != nil {
@@ -210,7 +221,7 @@ func (i *Interpreter) Evaluate() (string, error) {
 			i.environment = oldE
 
 			// If the function returned a value then use that.
-			if e == returnError {
+			if e == errReturn {
 				continue
 			}
 
