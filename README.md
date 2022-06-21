@@ -27,15 +27,14 @@ Execute with the name of a TCL-file to execute:
 ```
 
 
-## Example
+## Examples
 
-The following is a simple example program which shows what the code here
-looks like:
+The following is a simple example program which shows what the code here looks like:
 
 
 ```tcl
 //
-// Fibonacci sequence, in the naive recursive way
+// Fibonacci sequence, written in the naive/recursive fashion.
 //
 proc fib {x} {
     if { expr $x <= 1 } {
@@ -59,15 +58,47 @@ while { expr $i <= $max } {
 
 ```
 
+Another example is the test-code which @antirez posted with his [picol writeup](http://oldblog.antirez.com/page/picol.html) which looks like this:
+
+```tcl
+proc square {x} {
+    expr $x * $x
+}
+
+set a 1
+while {expr $a <= 10} {
+    if {expr $a == 5} {
+        puts "\tMissing five!"
+        incr a
+        continue
+        puts "After continue this won't be executed"
+    }
+    puts "I can compute that $a*$a = [square $a]"
+    set a [expr $a + 1]
+}
+
+puts "I'm alive; after the 'while' loop."
+```
+
+This example is saved as [picol.tcl](picol.tcl) so you can run it from the repository:
+
+```sh
+go build . && ./critical ./picol.tcl
+I can compute that 1*1 = 1
+I can compute that 2*2 = 4
+..
+```
+
+
 ## Built In Commands
 
 The following commands are available, and work as you'd expect:
 
-* `decr`, `expr`, `if`, `incr`, `proc`, `puts`, `return`, `set`, `while`.
+* `break`, `continue`, `decr`, `expr`, `if`, `incr`, `proc`, `puts`, `return`, `set`, `while`.
 
-In the near future we'll add `break`, `cd`, `continue`,  & `pwd`.
+In the near future we'll add `exit`, `for`, and a couple of the other simple primitives.
 
-The complete list if [TCL commands](https://www.tcl.tk/man/tcl/TclCmd/contents.html) will almost certainly never be implemented, but pull-request to add omissions you need will be applied with thanks.
+The complete list of standard [TCL commands](https://www.tcl.tk/man/tcl/TclCmd/contents.html) will almost certainly never be implemented, but pull-request to add omissions you need will be applied with thanks.
 
 
 
