@@ -324,11 +324,8 @@ func (l *Lexer) readNestedPair(open rune, close rune) (string, error) {
 			// back to zero then we're at the end of this one
 			if depth == 0 {
 				return out, nil
-			} else {
-				out = out + string(l.ch)
-
 			}
-
+			out = out + string(l.ch)
 			continue
 		}
 

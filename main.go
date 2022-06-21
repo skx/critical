@@ -27,7 +27,7 @@ func main() {
 	interpreter := interpreter.New(string(data))
 
 	// Evaluate the input
-	out, err := interpreter.Evaluate(false)
+	out, err := interpreter.Evaluate()
 	if err != nil {
 		fmt.Printf("Error running program:%s\n", err)
 		return
