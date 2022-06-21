@@ -11,13 +11,16 @@ import (
 	"github.com/skx/critical/token"
 )
 
-// BuiltIn represents a built-in function
-type BuiltIn struct {
+// HostFunction represents a built-in function available to the TCL environment
+// which is implemented in golang.
+type HostFunction struct {
+
 	// function is the golang function to handle the call
 	function func(i *Interpreter, args []string) (string, error)
 }
 
-// UserFunction is a function defined in TCL
+// UserFunction represents a function which has been defined by the user,
+// within the TCL environment (via the use of 'proc').
 type UserFunction struct {
 
 	// Args contains the list of parameters
@@ -30,21 +33,21 @@ type UserFunction struct {
 // Interpreter holds the interpreters state.
 type Interpreter struct {
 
-	// Source is the program we're going to execute
-	source string
-
 	// parser is the object we use to transform the source into
-	// a program we can evaluate
+	// a program we can evaluate.
 	parser *parser.Parser
 
 	// builtins contains pointers to the golang implementations of
 	// the TCL functions.
-	builtins map[string]BuiltIn
+	builtins map[string]HostFunction
 
-	// functions contain user-defined functions, written in TCL
+	// functions contain user-defined functions, written in TCL.
 	functions map[string]UserFunction
 
-	// environment contains any variables the user has defined
+	// environment holds any variable-references the user has defined.
+	//
+	// Note that functions the user defines are not stored here, they
+	// live in the `functions` map.
 	environment *environment.Environment
 }
 
@@ -53,46 +56,43 @@ func New(source string) *Interpreter {
 
 	// Create the object we'll return
 	i := &Interpreter{
-		builtins:    make(map[string]BuiltIn),
+		builtins:    make(map[string]HostFunction),
 		environment: environment.New(),
 		functions:   make(map[string]UserFunction),
 		parser:      parser.New(source),
-		source:      source,
 	}
 
 	// Bind the expected primitives
 
 	// These are internal functions that aren't real
-	i.builtins["#"] = BuiltIn{function: comment}
-	i.builtins["//"] = BuiltIn{function: comment}
-	i.builtins["\\n"] = BuiltIn{function: comment}
+	i.builtins["#"] = HostFunction{function: comment}
+	i.builtins["//"] = HostFunction{function: comment}
+	i.builtins["\\n"] = HostFunction{function: comment}
 
 	// These are real primitives
-	i.builtins["decr"] = BuiltIn{function: decr}
-	i.builtins["expr"] = BuiltIn{function: expr}
-	i.builtins["if"] = BuiltIn{function: iff}
-	i.builtins["incr"] = BuiltIn{function: incr}
-	i.builtins["puts"] = BuiltIn{function: puts}
-	i.builtins["proc"] = BuiltIn{function: proc}
-	i.builtins["set"] = BuiltIn{function: set}
-	i.builtins["while"] = BuiltIn{function: while}
+	i.builtins["decr"] = HostFunction{function: decr}
+	i.builtins["expr"] = HostFunction{function: expr}
+	i.builtins["if"] = HostFunction{function: iff}
+	i.builtins["incr"] = HostFunction{function: incr}
+	i.builtins["puts"] = HostFunction{function: puts}
+	i.builtins["proc"] = HostFunction{function: proc}
+	i.builtins["set"] = HostFunction{function: set}
+	i.builtins["while"] = HostFunction{function: while}
 
-	i.functions["square"] = UserFunction{
-		Args: []string{"x"},
-		Body: "puts $x ; expr $x * $x",
-	}
 	return i
 }
 
 // Evaluate parses the program source, and executes the program.
 func (i *Interpreter) Evaluate() (string, error) {
 
+	// Parse the program, if there were errors bail immediately.
 	program, err := i.parser.Parse()
 	if err != nil {
 		return "", err
 	}
 
-	// Output of the evaluation is the last output
+	// Output of the evaluation is the output received from the
+	// last statement which was executed.
 	out := ""
 
 	// For each parsed command, evaluate it
@@ -101,10 +101,23 @@ func (i *Interpreter) Evaluate() (string, error) {
 		// The name of the command we're going to run
 		name := ""
 
-		// The name might require expansion, so handle that first
+		// The name might require expansion, so handle that first.
 		switch cmd.Command.Type {
 		case token.NEWLINE:
-			// Yes, this is crazy
+			// Yes, this is crazy.
+			//
+			// It might no longer be necessary but in the past
+			// my parser would return newline-objects if there
+			// were multiple blank lines.
+			//
+			// Rather than wading through to fix that I just
+			// pretend there's a command called "\n" which then
+			// throws away all arguments/input.
+			//
+			// This is also used to handle comments, prefixed with
+			// either "#" or "//".
+			//
+			// It's almost sane, but ..
 			name = "\\n"
 		case token.STRING:
 			name = cmd.Command.Literal
@@ -118,11 +131,12 @@ func (i *Interpreter) Evaluate() (string, error) {
 			return "", fmt.Errorf("unknown command type %v", cmd.Command)
 		}
 
-		// We need to expand the arguments to the command, which
-		// will convert them into the appropriate arguments.
+		// We need to expand the arguments to the command, so here
+		// is the place to store those converted args, before we
+		// pass them to the handler.
 		var args []string
 
-		// This will need some love in the future.
+		// For each argument
 		for _, arg := range cmd.Arguments {
 
 			// If the token isn't a quoted form we've got
@@ -144,7 +158,7 @@ func (i *Interpreter) Evaluate() (string, error) {
 			}
 		}
 
-		// Is the function a built-in?
+		// Is the function a built-in implemented in golang?
 		fn, ok := i.builtins[name]
 		if ok {
 
@@ -157,7 +171,7 @@ func (i *Interpreter) Evaluate() (string, error) {
 			continue
 		}
 
-		// Is the function a user-function?
+		// Is the function a user-written function in TCL?
 		userFN, ok2 := i.functions[name]
 
 		if ok2 {
@@ -188,6 +202,8 @@ func (i *Interpreter) Evaluate() (string, error) {
 			// is over.
 			i.environment = oldE
 
+			// Now we've restored the environment we can
+			// handle the error-detection
 			if e != nil {
 				fmt.Printf("Error calling user function:%s\n", e)
 				return "", e
@@ -218,6 +234,11 @@ func (i *Interpreter) Evaluate() (string, error) {
 	return out, err
 }
 
+// expandString converts "$foo $bar" into "$ENV{'FOO'} $ENV{'BAR'}".
+//
+// It's a little horrid.
+//
+// TODO / FIXME / HACKY
 func (i *Interpreter) expandString(str string) string {
 	ret := ""
 
@@ -256,7 +277,7 @@ func (i *Interpreter) expandString(str string) string {
 	return ret
 }
 
-// Eval handles sub-expressions, this is horrid
+// Eval handles sub-expressions, this is horrid.
 // TODO / FIXME / HACK / XXX
 func (i *Interpreter) Eval(str string) (string, error) {
 
@@ -282,10 +303,12 @@ func (i *Interpreter) Eval(str string) (string, error) {
 
 // expandEval handles the expansion of "[ FOO ]" blocks.
 //
-// It now handles nested values, such that this works:
+// It correctly handles nested values, such that this works:
 //
 //    puts [ expr 1 + [ expr 2 + 3 ] ]
 //
+// The downside is we use a regular expression to handle the nested
+// processing, and that means we've got three problems..
 func (i *Interpreter) expandEval(str string) string {
 
 	r := regexp.MustCompile(`^(.*)\[([^\]]+)\](.*)$`)
@@ -310,10 +333,10 @@ func (i *Interpreter) expandEval(str string) string {
 	return str
 }
 
+// isLetter should be removed, or improved.  It is used for the variable
+// expansion only, via `expandString`.
 //
-// Built-In functions here ..
-//
-
+// TODO / FIXME / REMOVEME
 func isLetter(ch byte) bool {
 	return ((ch >= 'a' && ch <= 'z') ||
 		(ch >= 'A' && ch <= 'Z'))
