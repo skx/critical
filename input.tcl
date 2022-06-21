@@ -65,11 +65,10 @@ puts "3 inc is [inc 3]"
 //
 proc fib {x} {
     if { expr $x <= 1 } {
-        set ret 1
+        return 1
     } else {
-        set ret [expr [fib [expr $x - 1]] + [fib [expr $x - 2]]]
+        return [expr [fib [expr $x - 1]] + [fib [expr $x - 2]]]
     }
-    $ret
 }
 
 

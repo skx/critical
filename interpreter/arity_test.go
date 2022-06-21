@@ -25,6 +25,8 @@ func TestArity(t *testing.T) {
 		`puts "One" "Two"`,
 		`puts`,
 
+		`return`,
+		`return "one" "two"`,
 		`set`,
 		`set 1 2 3`,
 
