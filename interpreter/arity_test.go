@@ -13,6 +13,9 @@ func TestArity(t *testing.T) {
 		`decr`,
 		`decr "one" "two" "three"`,
 
+		`exit`,
+		`exit "one" "two"`,
+
 		`expr 1`,
 		`expr 1 + `,
 		`expr 1 + 2 + 3`,

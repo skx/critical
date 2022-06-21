@@ -73,6 +73,7 @@ func New(source string) *Interpreter {
 	i.builtins["break"] = HostFunction{function: breakFn}
 	i.builtins["continue"] = HostFunction{function: continueFn}
 	i.builtins["decr"] = HostFunction{function: decr}
+	i.builtins["exit"] = HostFunction{function: exitFn}
 	i.builtins["expr"] = HostFunction{function: expr}
 	i.builtins["if"] = HostFunction{function: iff}
 	i.builtins["incr"] = HostFunction{function: incr}
