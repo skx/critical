@@ -22,7 +22,7 @@ func main() {
 	}
 
 	// Read our standard library
-	stdlib := stdlib.StdlibContents()
+	stdlib := stdlib.Contents()
 
 	// Read the file the user wanted
 	data, err := ioutil.ReadFile(flag.Args()[0])

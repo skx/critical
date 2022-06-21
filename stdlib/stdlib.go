@@ -10,7 +10,7 @@ import (
 //go:embed stdlib.tcl
 var message string
 
-// StdlibContents returns the embedded TCL code.
-func StdlibContents() []byte {
+// Contents returns the embedded TCL code.
+func Contents() []byte {
 	return []byte(message)
 }
