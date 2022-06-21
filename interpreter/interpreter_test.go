@@ -7,7 +7,7 @@ func TestBasic(t *testing.T) {
 	// Basic program that does nothing useful
 	x := New(`expr 3 + 6`)
 
-	out, err := x.Evaluate(false)
+	out, err := x.Evaluate()
 	if err != nil {
 		t.Fatalf("error running program: %s", err)
 	}
@@ -28,7 +28,7 @@ func TestEval(t *testing.T) {
 
 	tests := []TestCase{
 		TestCase{Input: `"Steve"`, Output: `Steve`},
-		TestCase{Input: `33`, Output: `33`},
+		TestCase{Input: `"33"`, Output: `33`},
 		TestCase{Input: `expr 3 + 3`, Output: `6`},
 		TestCase{Input: `expr 3 * 3`, Output: `9`},
 		TestCase{Input: `expr 3 - 1`, Output: `2`},
@@ -68,7 +68,7 @@ func TestDecr(t *testing.T) {
 	// Set a value, and then decrease it..
 	x := New(`set a 10 ; decr a ; decr a 2; decr a; set a`)
 
-	out, err := x.Evaluate(false)
+	out, err := x.Evaluate()
 	if err != nil {
 		t.Fatalf("error running program: %s", err)
 	}
@@ -85,7 +85,7 @@ func TestIncr(t *testing.T) {
 	// Basic program that increments an empty variable
 	x := New(`incr a ; incr a 1; incr a`)
 
-	out, err := x.Evaluate(false)
+	out, err := x.Evaluate()
 	if err != nil {
 		t.Fatalf("error running program: %s", err)
 	}
@@ -101,7 +101,7 @@ func TestExpandEval(t *testing.T) {
 
 	x := New(`puts [ expr 1 + [ expr 2 + 3 ] ]`)
 
-	out, err := x.Evaluate(false)
+	out, err := x.Evaluate()
 	if err != nil {
 		t.Fatalf("error running program: %s", err)
 	}

@@ -23,6 +23,52 @@ Execute with the name of a TCL-file to execute:
 ```
 
 
+## Example
+
+The following is a simple example program which shows what the code here
+looks like:
+
+* **NOTE**: Currently we've not implemented `return`, so the output of a procedure is the last value evaluated.  That's why we use `$ret`:
+
+```tcl
+//
+// Fibonacci sequence, in the naive recursive way
+//
+proc fib {x} {
+    if { expr $x <= 1 } {
+        set ret 1
+    } else {
+        set ret [expr [fib [expr $x - 1]] + [fib [expr $x - 2]]]
+    }
+    $ret
+}
+
+
+//
+// Lets run this in a loop
+//
+set i 0
+set max 20
+
+while { expr $i <= $max } {
+   puts "Fib $i is [fib $i]"
+   incr i
+}
+
+```
+
+## Built In Commands
+
+The following commands are available, and work as you'd expect:
+
+* `decr`, `expr`, `if`, `incr`, `proc`, `puts`, `set`, `while`.
+
+In the near future we'll add `break`, `cd`, `continue`, `return`, & `pwd`.
+
+The complete list if [TCL commands](https://www.tcl.tk/man/tcl/TclCmd/contents.html) will almost certainly never be implemented, but pull-request to add omissions you need will be applied with thanks.
+
+
+
 ## Features
 
 Read the file [input.tcl](input.tcl) to get a feel for the language, but in-brief you've got the following facilities available:
@@ -35,6 +81,7 @@ Read the file [input.tcl](input.tcl) to get a feel for the language, but in-brie
   * Including inside strings.
 * Inline variable expansion.
   * Including inside strings.
+* The ability to define procedures, via `proc`.
 
 Badly implemented features:
 
@@ -43,9 +90,6 @@ Badly implemented features:
 * Inline expansion swallows a character
   * `puts "[expr 3 + 3]ab` shows `3b` - where did `a` go?
 
-Missing features?
-
-* The ability to define `procs`.
 
 
 ## Testing

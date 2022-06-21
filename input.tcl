@@ -52,3 +52,34 @@ while { expr $i <= $max } {
 puts "Sum of 1..10 (==(10x11)/2): $sum"
 
 
+
+
+//
+// Our first user-defined function!
+//
+proc inc {x} { puts "X is $x"; expr $x + 1 }
+puts "3 inc is [inc 3]"
+
+//
+// No comment
+//
+proc fib {x} {
+    if { expr $x <= 1 } {
+        set ret 1
+    } else {
+        set ret [expr [fib [expr $x - 1]] + [fib [expr $x - 2]]]
+    }
+    $ret
+}
+
+
+//
+// Lets run this in a loop
+//
+set i 0
+set max 20
+
+while { expr $i <= $max } {
+   puts "Fib $i is [fib $i]"
+   incr i
+}

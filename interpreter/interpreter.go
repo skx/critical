@@ -17,6 +17,16 @@ type BuiltIn struct {
 	function func(i *Interpreter, args []string) (string, error)
 }
 
+// UserFunction is a function defined in TCL
+type UserFunction struct {
+
+	// Args contains the list of parameters
+	Args []string
+
+	// Body contains the function body
+	Body string
+}
+
 // Interpreter holds the interpreters state.
 type Interpreter struct {
 
@@ -31,6 +41,9 @@ type Interpreter struct {
 	// the TCL functions.
 	builtins map[string]BuiltIn
 
+	// functions contain user-defined functions, written in TCL
+	functions map[string]UserFunction
+
 	// environment contains any variables the user has defined
 	environment *environment.Environment
 }
@@ -42,6 +55,7 @@ func New(source string) *Interpreter {
 	i := &Interpreter{
 		builtins:    make(map[string]BuiltIn),
 		environment: environment.New(),
+		functions:   make(map[string]UserFunction),
 		parser:      parser.New(source),
 		source:      source,
 	}
@@ -59,14 +73,19 @@ func New(source string) *Interpreter {
 	i.builtins["if"] = BuiltIn{function: iff}
 	i.builtins["incr"] = BuiltIn{function: incr}
 	i.builtins["puts"] = BuiltIn{function: puts}
+	i.builtins["proc"] = BuiltIn{function: proc}
 	i.builtins["set"] = BuiltIn{function: set}
 	i.builtins["while"] = BuiltIn{function: while}
 
+	i.functions["square"] = UserFunction{
+		Args: []string{"x"},
+		Body: "puts $x ; expr $x * $x",
+	}
 	return i
 }
 
 // Evaluate parses the program source, and executes the program.
-func (i *Interpreter) Evaluate(allowEmpty bool) (string, error) {
+func (i *Interpreter) Evaluate() (string, error) {
 
 	program, err := i.parser.Parse()
 	if err != nil {
@@ -117,28 +136,83 @@ func (i *Interpreter) Evaluate(allowEmpty bool) (string, error) {
 				// having that there.
 				expand = i.expandEval(expand)
 
+				// Save the argument away.
 				args = append(args, expand)
 			} else {
+				// This is a quoted-block, just append literally
 				args = append(args, arg.Literal)
 			}
 		}
 
+		// Is the function a built-in?
 		fn, ok := i.builtins[name]
-		if !ok {
+		if ok {
 
-			// OK so the thing wasn't
-			if allowEmpty {
-				return name, nil
+			// Call the function, and if it errors then abort
+			var e error
+			out, e = fn.function(i, args)
+			if e != nil {
+				return "", fmt.Errorf("error invoking %s: %s", cmd.Command.Literal, e)
 			}
-			return "", fmt.Errorf("unknown command '%s'", name)
+			continue
 		}
 
-		// Call the function, and if it errors then abort
-		var e error
-		out, e = fn.function(i, args)
-		if e != nil {
-			return "", fmt.Errorf("error invoking %s: %s", cmd.Command.Literal, e)
+		// Is the function a user-function?
+		userFN, ok2 := i.functions[name]
+
+		if ok2 {
+			var e error
+
+			if len(args) != len(userFN.Args) {
+				return "", fmt.Errorf("function argument mismatch, %s takes %d arguments, %d supplied", name, len(userFN.Args), len(args))
+			}
+
+			// Save old environment
+			oldE := i.environment
+
+			// Create a new environment
+			newE := environment.NewEnclosedEnvironment(oldE)
+
+			// Make the environment live
+			i.environment = newE
+
+			// Set the environment variables for the proc
+			// arguments.
+			for idx, arg := range userFN.Args {
+				i.environment.Set(arg, args[idx])
+			}
+
+			out, e = i.Eval(userFN.Body)
+
+			// Restore the old environment, now the function
+			// is over.
+			i.environment = oldE
+
+			if e != nil {
+				fmt.Printf("Error calling user function:%s\n", e)
+				return "", e
+			}
+
+			continue
 		}
+
+		// At this point we've been given a "command" which
+		// doesn't exist as a function - either in golang, or
+		// user-defined.
+		//
+		// If the input was a literal string then we'll return
+		// that
+		if cmd.Command.Type == token.STRING {
+			return cmd.Command.Literal, nil
+		}
+		if cmd.Command.Type == token.NUMBER {
+			return cmd.Command.Literal, nil
+		}
+
+		//
+		// Otherwise we just return an error.
+		//
+		return "", fmt.Errorf("unknown command '%s'", name)
 
 	}
 	return out, err
@@ -193,8 +267,12 @@ func (i *Interpreter) Eval(str string) (string, error) {
 	// affect this environment too, not just the child one.
 	tmp.environment = i.environment
 
+	// Hacky way to ensure the child environment has the same
+	// functions as we do.
+	tmp.functions = i.functions
+
 	// run the script
-	out, err := tmp.Evaluate(true)
+	out, err := tmp.Evaluate()
 	if err != nil {
 		return "", err
 	}

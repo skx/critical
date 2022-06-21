@@ -19,6 +19,9 @@ func TestArity(t *testing.T) {
 		`incr`,
 		`incr "one" 2 3`,
 
+		`proc "one"`,
+		`proc "one", "two", "three", "four"`,
+
 		`puts "One" "Two"`,
 		`puts`,
 
@@ -32,7 +35,7 @@ func TestArity(t *testing.T) {
 	for _, test := range tests {
 		x := New(test)
 
-		_, err := x.Evaluate(false)
+		_, err := x.Evaluate()
 
 		if err == nil {
 			t.Fatalf("expected error, got none:%s", test)
