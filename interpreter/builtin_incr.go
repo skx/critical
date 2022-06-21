@@ -28,7 +28,7 @@ func incr(i *Interpreter, args []string) (string, error) {
 		var err error
 		increase, err = strconv.Atoi(args[1])
 		if err != nil {
-			return "", nil
+			return "", err
 		}
 	}
 

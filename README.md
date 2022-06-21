@@ -120,8 +120,6 @@ Badly implemented features:
 
 * This fails as the spaces around `+` are necessary:
   * `puts [expr $a+$b]`
-* Inline expansion swallows a character
-  * `puts "[expr 3 + 3]ab` shows `3b` - where did `a` go?
 
 
 

@@ -63,40 +63,6 @@ func TestEval(t *testing.T) {
 	}
 }
 
-func TestDecr(t *testing.T) {
-
-	// Set a value, and then decrease it..
-	x := New(`set a 10 ; decr a ; decr a 2; decr a; set a`)
-
-	out, err := x.Evaluate()
-	if err != nil {
-		t.Fatalf("error running program: %s", err)
-	}
-
-	expected := "6"
-
-	if out != expected {
-		t.Fatalf("unexpected output '%s'!=%s", out, expected)
-	}
-}
-
-func TestIncr(t *testing.T) {
-
-	// Basic program that increments an empty variable
-	x := New(`incr a ; incr a 1; incr a`)
-
-	out, err := x.Evaluate()
-	if err != nil {
-		t.Fatalf("error running program: %s", err)
-	}
-
-	expected := "3"
-
-	if out != expected {
-		t.Fatalf("unexpected output '%s'!=%s", out, expected)
-	}
-}
-
 func TestExpandEval(t *testing.T) {
 
 	x := New(`puts [ expr 1 + [ expr 2 + 3 ] ]`)
@@ -110,5 +76,36 @@ func TestExpandEval(t *testing.T) {
 
 	if out != expected {
 		t.Fatalf("unexpected output '%s'!=%s", out, expected)
+	}
+
+	// Ensure that we don't lose characters
+	x = New(`puts "[expr 3 + 3]ab"`)
+	out, err = x.Evaluate()
+
+	if err != nil {
+		t.Fatalf("unexpected error running script")
+	}
+	if out != "6ab" {
+		t.Fatalf("output %s != 6ab", out)
+	}
+}
+
+func TestExpandString(t *testing.T) {
+
+	x := New(`set a pu ; set b ts ; $a$b "OK"`)
+
+	out, err := x.Evaluate()
+	if err != nil {
+		t.Fatalf("error running program: %s", err)
+	}
+	if out != "OK" {
+		t.Fatalf("unexpected output")
+	}
+
+	// now we have "$a -> pu"
+	// now we have "$b -> ts"
+	out = x.expandString("AA$a$b CC")
+	if out != "AAputs CC" {
+		t.Fatalf("unexpected output expanding string '%s'", out)
 	}
 }
