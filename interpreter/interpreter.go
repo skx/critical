@@ -76,6 +76,7 @@ func New(source string) *Interpreter {
 	i.builtins["incr"] = HostFunction{function: incr}
 	i.builtins["puts"] = HostFunction{function: puts}
 	i.builtins["proc"] = HostFunction{function: proc}
+	i.builtins["return"] = HostFunction{function: returnFn}
 	i.builtins["set"] = HostFunction{function: set}
 	i.builtins["while"] = HostFunction{function: while}
 
@@ -165,6 +166,12 @@ func (i *Interpreter) Evaluate() (string, error) {
 			// Call the function, and if it errors then abort
 			var e error
 			out, e = fn.function(i, args)
+
+			// If the function returned a value then use that.
+			if e == returnError {
+				continue
+			}
+
 			if e != nil {
 				return "", fmt.Errorf("error invoking %s: %s", cmd.Command.Literal, e)
 			}
@@ -202,6 +209,11 @@ func (i *Interpreter) Evaluate() (string, error) {
 			// is over.
 			i.environment = oldE
 
+			// If the function returned a value then use that.
+			if e == returnError {
+				continue
+			}
+
 			// Now we've restored the environment we can
 			// handle the error-detection
 			if e != nil {
@@ -228,7 +240,7 @@ func (i *Interpreter) Evaluate() (string, error) {
 		//
 		// Otherwise we just return an error.
 		//
-		return "", fmt.Errorf("unknown command '%s'", name)
+		// return out"", fmt.Errorf("unknown command '%s'", name)
 
 	}
 	return out, err

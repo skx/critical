@@ -32,7 +32,6 @@ Execute with the name of a TCL-file to execute:
 The following is a simple example program which shows what the code here
 looks like:
 
-* **NOTE**: Currently we've not implemented `return`, so the output of a procedure is the last value evaluated.  That's why we use `$ret`:
 
 ```tcl
 //
@@ -40,11 +39,10 @@ looks like:
 //
 proc fib {x} {
     if { expr $x <= 1 } {
-        set ret 1
+        return 1
     } else {
-        set ret [expr [fib [expr $x - 1]] + [fib [expr $x - 2]]]
+        return [expr [fib [expr $x - 1]] + [fib [expr $x - 2]]]
     }
-    $ret
 }
 
 
@@ -65,9 +63,9 @@ while { expr $i <= $max } {
 
 The following commands are available, and work as you'd expect:
 
-* `decr`, `expr`, `if`, `incr`, `proc`, `puts`, `set`, `while`.
+* `decr`, `expr`, `if`, `incr`, `proc`, `puts`, `return`, `set`, `while`.
 
-In the near future we'll add `break`, `cd`, `continue`, `return`, & `pwd`.
+In the near future we'll add `break`, `cd`, `continue`,  & `pwd`.
 
 The complete list if [TCL commands](https://www.tcl.tk/man/tcl/TclCmd/contents.html) will almost certainly never be implemented, but pull-request to add omissions you need will be applied with thanks.
 
