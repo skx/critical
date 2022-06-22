@@ -2,23 +2,6 @@ package interpreter
 
 import "testing"
 
-func TestBasic(t *testing.T) {
-
-	// Basic program that does nothing useful
-	x := New(`expr 3 + 6`)
-
-	out, err := x.Evaluate()
-	if err != nil {
-		t.Fatalf("error running program: %s", err)
-	}
-
-	expected := "9"
-
-	if out != expected {
-		t.Fatalf("unexpected output '%s'!=%s", out, expected)
-	}
-}
-
 func TestEval(t *testing.T) {
 
 	type TestCase struct {
