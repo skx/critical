@@ -15,16 +15,24 @@ func proc(i *Interpreter, args []string) (string, error) {
 	// name
 	name := args[0]
 
-	// args
-	parm := args[1]
-	a := strings.Split(parm, " ")
+	// args - split by space
+	argsIn := strings.Split(args[1], " ")
+
+	// But only collect the non-empty ones
+	argsOut := []string{}
+
+	for _, arg := range argsIn {
+		if strings.TrimSpace(arg) != "" {
+			argsOut = append(argsOut, arg)
+		}
+	}
 
 	// body
 	body := args[2]
 
 	// Save the function
 	i.functions[name] = UserFunction{
-		Args: a,
+		Args: argsOut,
 		Body: body,
 	}
 
