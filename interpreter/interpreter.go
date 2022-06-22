@@ -68,7 +68,6 @@ func New(source string) *Interpreter {
 	// These are internal functions that aren't real
 	i.builtins["#"] = HostFunction{function: comment}
 	i.builtins["//"] = HostFunction{function: comment}
-	i.builtins["\\n"] = HostFunction{function: comment}
 
 	// These are real primitives
 	i.builtins["append"] = HostFunction{function: appendFn}
@@ -111,22 +110,6 @@ func (i *Interpreter) Evaluate() (string, error) {
 
 		// The name might require expansion, so handle that first.
 		switch cmd.Command.Type {
-		case token.NEWLINE:
-			// Yes, this is crazy.
-			//
-			// It might no longer be necessary but in the past
-			// my parser would return newline-objects if there
-			// were multiple blank lines.
-			//
-			// Rather than wading through to fix that I just
-			// pretend there's a command called "\n" which then
-			// throws away all arguments/input.
-			//
-			// This is also used to handle comments, prefixed with
-			// either "#" or "//".
-			//
-			// It's almost sane, but ..
-			name = "\\n"
 		case token.STRING:
 			name = cmd.Command.Literal
 		case token.NUMBER:
@@ -226,11 +209,6 @@ func (i *Interpreter) Evaluate() (string, error) {
 			// Restore the old environment, now the function
 			// is over.
 			i.environment = oldE
-
-			// If the function returned a value then use that.
-			if e == errReturn {
-				continue
-			}
 
 			// Now we've restored the environment we can
 			// handle the error-detection
