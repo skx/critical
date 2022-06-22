@@ -20,6 +20,11 @@ func TestArity(t *testing.T) {
 		`expr 1 + `,
 		`expr 1 + 2 + 3`,
 
+		`eval`,
+		`eval "one" 3`,
+
+		`for "one"`,
+
 		`if { 1 } `,
 		`if { 1 } { 2 } else { 3 } or { 4}`,
 
