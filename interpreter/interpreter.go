@@ -4,6 +4,7 @@ package interpreter
 
 import (
 	"fmt"
+	"os"
 	"regexp"
 
 	"github.com/skx/critical/environment"
@@ -263,46 +264,22 @@ func (i *Interpreter) Evaluate() (string, error) {
 }
 
 // expandString converts "$foo $bar" into "$ENV{'FOO'} $ENV{'BAR'}".
-//
-// It's a little horrid.
-//
-// TODO / FIXME / HACKY
 func (i *Interpreter) expandString(str string) string {
-	ret := ""
 
-	idx := 0
-
-	for idx < len(str) {
-
-		if str[idx] == '$' {
-
-			// Skip past the dollar
-			idx++
-
-			// We build up the name of the variable to
-			// expand
-			variable := ""
-
-			// While we've not walked off the end of our
-			// string, and we've got a "letter" then we
-			// can update our variable name.
-			for idx < len(str) && (isNumber(str[idx]) || isLetter(str[idx])) {
-				variable += string(str[idx])
-				idx++
-			}
-
-			// OK append the variable value to the string
-			val, _ := i.environment.Get(variable)
-			ret += val
-		} else {
-
-			// Just append the string
-			ret += str[idx : idx+1]
-			idx++
+	// Lookup any variables inside our environment.
+	//
+	// If they're not found then return ""
+	//
+	mapper := func(placeholderName string) string {
+		val, ok := i.environment.Get(placeholderName)
+		if ok {
+			return val
 		}
+		return ""
 	}
 
-	return ret
+	// Replace the string, using the mapper.
+	return os.Expand(str, mapper)
 }
 
 // Eval handles sub-expressions, this is horrid.
@@ -360,16 +337,4 @@ func (i *Interpreter) expandEval(str string) string {
 	}
 
 	return str
-}
-
-// isLetter should be removed, or improved.  It is used for the variable
-// expansion only, via `expandString`.
-//
-// TODO / FIXME / REMOVEME
-func isLetter(ch byte) bool {
-	return ((ch >= 'a' && ch <= 'z') ||
-		(ch >= 'A' && ch <= 'Z'))
-}
-func isNumber(ch byte) bool {
-	return (ch >= '0' && ch <= '9')
 }
