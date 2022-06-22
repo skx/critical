@@ -250,6 +250,9 @@ func (i *Interpreter) expandString(str string) string {
 	// If they're not found then return ""
 	//
 	mapper := func(placeholderName string) string {
+		if placeholderName == "$" {
+			return "$"
+		}
 		val, ok := i.environment.Get(placeholderName)
 		if ok {
 			return val

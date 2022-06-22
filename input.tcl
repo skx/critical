@@ -110,10 +110,10 @@ for {set i 0} {< $i 50} {incr i} {
 //
 // This is just a horrid approach for running eval
 //
-set a { set b 20 ; incr b ; incr b; puts "B is $b" }
+set a { set b 20 ; incr b ; incr b; puts "$$b is $b" }
 eval "$a"
 
 //
 // Is this better?
 //
-eval { set b 20 ; incr b ; incr b; puts "B is $b" }
+eval { set b 20 ; incr b ; incr b; puts "$$b is $b" }
