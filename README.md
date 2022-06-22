@@ -3,11 +3,16 @@
 [![license](https://img.shields.io/github/license/skx/critical.svg)](https://github.com/skx/critical/blob/master/LICENSE)
 
 
-# criTiCaL
+# criTiCaL - A TCL interpreter written in golang
 
-I had a bit of fun reading [TCL the Misunderstood](http://antirez.com/articoli/tclmisunderstood.html), and hacked up a simple TCL-like evaluator.
+After re-reading [TCL the Misunderstood](http://antirez.com/articoli/tclmisunderstood.html), I decided to create a simple TCL evaluator of my own.  This project is the result, and it has feature-parity with the two existing "small TCL" projects, written in C, which I examined:
 
-The process was described a little in my blog here:
+* [picol](http://oldblog.antirez.com/page/picol.html)
+  - By @antirez.
+* [partcl](https://zserge.com/posts/tcl-interpreter/)
+  - By @zserge.
+
+There is a simple introduction to this project, and TCL syntax, on my blog here:
 
 * [Writing a simple TCL interpreter in golang](https://blog.steve.fi/writing_a_simple_tcl_interpreter_in_golang.html)
 
@@ -106,7 +111,7 @@ I can compute that 2*2 = 4
 ```
 
 
-## Built In Commands
+## Available Commands
 
 The following commands are available, and work as you'd expect:
 
@@ -137,15 +142,25 @@ Badly implemented features:
 
 
 
+## Missing Features
+
+The biggest missing feature is the complete absence of support for lists of any kind.  This is common in the more minimal-TCL interpreters I examined.
+
+The other obvious missing feature is support for the `upvalue` command, which means we're always a little at risk of scope-related issues.
+
+Adding `upvalue` would be possible, but adding list-processing would be more work than I'd prefer to carry out at this time.
+
+
+
 ## Testing
 
-Most of the internal packages have high test-coverage, which can be exercised as you would expect:
+Our code has near 100% test-coverage, which you can exercise via the standard golang facilities:
 
 ```sh
 $ go test ./...
 ```
 
-In addition to the standard/static testing there are fuzz-based testers for the lexer and parser.  To run these run one of the following two sets of commands:
+There are also fuzz-based testers supplied for the [lexer](lexer/) and [parser](parser/) packages, to run these run one of the following two sets of commands:
 
 ```sh
 cd parser
@@ -161,7 +176,7 @@ go test -fuzztime=300s -parallel=1 -fuzz=FuzzLexer -v
 
 ## Bugs?
 
-Yeah I'm not surprised.  Please feel free to open a new issue **with your example** included so I can see how to fix it.
+Please feel free to open a new issue **with your example** included so I can see how to fix it.
 
 
 Steve
