@@ -61,7 +61,7 @@ proc inc {x} { puts "X is $x"; expr $x + 1 }
 puts "3 inc is [inc 3]"
 
 //
-// No comment
+// Naive/Recursive solution.
 //
 proc fib {x} {
     if { expr $x <= 1 } {
@@ -71,14 +71,49 @@ proc fib {x} {
     }
 }
 
+//
+// A better, non-recursive, solution.
+//
+proc fib2 {n} {
+    set a 1
+    set b 1
+    for {set N $n} {expr [set N] > 0} {decr N} {
+        set tmp [+ $a $b]
+        set a $b
+        set b $tmp
+    }
+    return $a
+}
+
+
 
 //
 // Lets run this in a loop
 //
 set i 0
-set max 20
+set max 15
 
 while { expr $i <= $max } {
-   puts "Fib $i is [fib $i]"
-   incr i
+    puts "Fib from a while-loop, with recursion, result $i is [fib $i]"
+    incr i
 }
+
+//
+// We can do the same thing again, using a for-loop, and a different (faster)
+// Fibonacci sequence generator.
+//
+for {set i 0} {< $i 50} {incr i} {
+    puts "Fib from a for-loop, without recursion, result $i is [fib2 $i]"
+}
+
+
+//
+// This is just a horrid approach for running eval
+//
+set a { set b 20 ; incr b ; incr b; puts "B is $b" }
+eval "$a"
+
+//
+// Is this better?
+//
+eval { set b 20 ; incr b ; incr b; puts "B is $b" }

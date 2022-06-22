@@ -73,9 +73,11 @@ func New(source string) *Interpreter {
 	i.builtins["break"] = HostFunction{function: breakFn}
 	i.builtins["continue"] = HostFunction{function: continueFn}
 	i.builtins["decr"] = HostFunction{function: decr}
+	i.builtins["eval"] = HostFunction{function: evalFn}
 	i.builtins["exit"] = HostFunction{function: exitFn}
 	i.builtins["expr"] = HostFunction{function: expr}
-	i.builtins["if"] = HostFunction{function: iff}
+	i.builtins["for"] = HostFunction{function: forFn}
+	i.builtins["if"] = HostFunction{function: ifFn}
 	i.builtins["incr"] = HostFunction{function: incr}
 	i.builtins["proc"] = HostFunction{function: proc}
 	i.builtins["puts"] = HostFunction{function: puts}
@@ -175,11 +177,13 @@ func (i *Interpreter) Evaluate() (string, error) {
 				continue
 			}
 
-			// break and continue will be handled within the
-			// while-handler.
 			//
-			// TODO if we ever support the `for` function
-			// then that will need to be handled too.
+			// `break` and `continue` errors are handled specially
+			// within the handlers for `if` and `while`.
+			//
+			// Here we just return them, and they'll do the
+			// right thing.
+			//
 			if e == errBreak || e == errContinue {
 				return out, e
 			}
@@ -282,7 +286,7 @@ func (i *Interpreter) expandString(str string) string {
 			// While we've not walked off the end of our
 			// string, and we've got a "letter" then we
 			// can update our variable name.
-			for idx < len(str) && isLetter(str[idx]) {
+			for idx < len(str) && (isNumber(str[idx]) || isLetter(str[idx])) {
 				variable += string(str[idx])
 				idx++
 			}
@@ -351,6 +355,7 @@ func (i *Interpreter) expandEval(str string) string {
 		// Now update our string.
 		str = before + eval + after
 
+		// And continue going until we find no more matches.
 		out = r.FindStringSubmatch(str)
 	}
 
@@ -364,4 +369,7 @@ func (i *Interpreter) expandEval(str string) string {
 func isLetter(ch byte) bool {
 	return ((ch >= 'a' && ch <= 'z') ||
 		(ch >= 'A' && ch <= 'Z'))
+}
+func isNumber(ch byte) bool {
+	return (ch >= '0' && ch <= '9')
 }

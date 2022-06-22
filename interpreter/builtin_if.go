@@ -2,8 +2,8 @@ package interpreter
 
 import "fmt"
 
-// iff is the golang implementation of the TCL `if` function.
-func iff(i *Interpreter, args []string) (string, error) {
+// ifFn is the golang implementation of the TCL `if` function.
+func ifFn(i *Interpreter, args []string) (string, error) {
 
 	// Test arguments
 	if len(args) != 2 && len(args) != 4 {
