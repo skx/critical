@@ -71,6 +71,7 @@ func New(source string) *Interpreter {
 	i.builtins["\\n"] = HostFunction{function: comment}
 
 	// These are real primitives
+	i.builtins["append"] = HostFunction{function: appendFn}
 	i.builtins["break"] = HostFunction{function: breakFn}
 	i.builtins["continue"] = HostFunction{function: continueFn}
 	i.builtins["decr"] = HostFunction{function: decr}

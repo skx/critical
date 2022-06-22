@@ -6,6 +6,8 @@ import "testing"
 func TestArity(t *testing.T) {
 
 	tests := []string{
+		`append`,
+
 		`break "one"`,
 
 		`continue "one" "two"`,
