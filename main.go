@@ -10,10 +10,18 @@ import (
 	"github.com/skx/critical/stdlib"
 )
 
+var version = "unreleased"
+
 func main() {
 
-	noStdlib := flag.Bool("no-stdlib", false, "Disable the (embedded) standard library")
+	noStdlib := flag.Bool("no-stdlib", false, "Disable the (embedded) standard library.")
+	versionFlag := flag.Bool("version", false, "Show our version, and exit.")
 	flag.Parse()
+
+	if *versionFlag {
+		fmt.Printf("critical %s\n", version)
+		return
+	}
 
 	// Ensure we have a file to execute.
 	if len(flag.Args()) < 1 {
