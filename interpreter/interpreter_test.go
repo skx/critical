@@ -46,8 +46,8 @@ func TestExpandString(t *testing.T) {
 
 	// now we have "$a -> pu"
 	// now we have "$b -> ts"
-	out = x.expandString("AA$a$b$c CC")
-	if out != "AAputs CC" {
+	out = x.expandString("A$$A$a$b$c CC")
+	if out != "A$Aputs CC" {
 		t.Fatalf("unexpected output expanding string '%s'", out)
 	}
 }
@@ -123,5 +123,20 @@ star 2 19
 	}
 	if out != "38" {
 		t.Fatalf("wrong result for multiplication")
+	}
+}
+
+func TestInvalidType(t *testing.T) {
+
+	// This makes no sense, because we're replacing something
+	// which could just be expressed directly.
+	//
+	//  i.e. "FOO" is the same as "[ FOO ]"
+	//
+	x := New(`[ expr 1 + 1 ]`)
+
+	_, err := x.Evaluate()
+	if err == nil {
+		t.Fatalf("expected error on illegal token, got none")
 	}
 }
