@@ -104,7 +104,7 @@ func TestExpandString(t *testing.T) {
 
 	// now we have "$a -> pu"
 	// now we have "$b -> ts"
-	out = x.expandString("AA$a$b CC")
+	out = x.expandString("AA$a$b$c CC")
 	if out != "AAputs CC" {
 		t.Fatalf("unexpected output expanding string '%s'", out)
 	}
