@@ -11,6 +11,9 @@ import (
 // TestEmpty tests a couple of different empty strings
 func TestEmpty(t *testing.T) {
 
+	// Set the debug-flag so we're good
+	os.Setenv("DEBUG_LEXER", "true")
+
 	// empty string
 	l := New("")
 
@@ -30,6 +33,8 @@ func TestEmpty(t *testing.T) {
 
 		i++
 	}
+	os.Unsetenv("DEBUG_LEXER")
+
 }
 
 // TestVariable does simple variable testing.
