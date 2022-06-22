@@ -14,9 +14,17 @@ puts [set a]
 set name "Steve"
 puts "Hello World my name is $name"
 
-// maths
-puts "[expr 3 * 4]  ok world"
-puts "I'm dividing - NOTE this is an integer expression - [expr 3 / 4]"
+// We have a standard library, located in `stdlib/stdlib.tcl`
+//
+// The standard library contains a couple of helpful methods,
+// one of which is `assert_equal`.
+//
+// This will do "string" or "number" comparisons, and terminate
+// execution on failure.
+//
+assert_equal "$name" "Steve"
+assert_equal 9 [expr 3 * 3]
+assert_equal 12 [+ 10 2]
 
 // conditional
 if { 1 } { puts "OK: 1 was ok" }

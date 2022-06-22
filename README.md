@@ -115,7 +115,7 @@ I can compute that 2*2 = 4
 
 The following commands are available, and work as you'd expect:
 
-* `append`, `break`, `continue`, `decr`, `eval`, `exit`, `expr`, `for`, `if`, `incr`, `proc`, `puts`, `return`, `set`, `while`.
+* `append`, `break`, `continue`, `decr`, `eval`, `exit`, `expr`, `for`, `if`, `incr`, `proc`, `puts`, `regexp`, `return`, `set`, `while`.
 
 The complete list of standard [TCL commands](https://www.tcl.tk/man/tcl/TclCmd/contents.html) will almost certainly never be implemented, but pull-request to add omissions you need will be applied with thanks.
 

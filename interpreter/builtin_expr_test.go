@@ -40,6 +40,12 @@ func TestExpr(t *testing.T) {
 		{Input: []string{"3", "==", "3"}, Output: "1"},
 		{Input: []string{"21", "==", "2"}, Output: "0"},
 
+		{Input: []string{"steve", "eq", "steve"}, Output: "1"},
+		{Input: []string{"steve", "eq", "Steve"}, Output: "0"},
+
+		{Input: []string{"Kemp", "ne", "kemp"}, Output: "1"},
+		{Input: []string{"Kemp", "ne", "Kemp"}, Output: "0"},
+
 		// errors
 		{Input: []string{"steve", "+", "3"}, Output: "", Error: "strconv"},
 		{Input: []string{"34", "+", "steve"}, Output: "", Error: "strconv"},

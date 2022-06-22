@@ -12,16 +12,30 @@ func expr(i *Interpreter, args []string) (string, error) {
 	}
 
 	aV, eA := strconv.Atoi(args[0])
-	if eA != nil {
+	if eA != nil && (args[1] != "ne" && args[1] != "eq") {
 		return "", eA
 	}
 	op := args[1]
 	bV, eB := strconv.Atoi(args[2])
-	if eB != nil {
+	if eB != nil && (args[1] != "ne" && args[1] != "eq") {
 		return "", eB
 	}
 
 	switch op {
+
+	case "eq":
+		// string equality test
+		if args[0] == args[2] {
+			return "1", nil
+		}
+		return "0", nil
+	case "ne":
+		// string inequality test
+		if args[0] != args[2] {
+			return "1", nil
+		}
+		return "0", nil
+
 	case "+":
 		return (fmt.Sprintf("%d", aV+bV)), nil
 	case "-":

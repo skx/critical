@@ -82,6 +82,7 @@ func New(source string) *Interpreter {
 	i.builtins["incr"] = HostFunction{function: incr}
 	i.builtins["proc"] = HostFunction{function: proc}
 	i.builtins["puts"] = HostFunction{function: puts}
+	i.builtins["regexp"] = HostFunction{function: regexpFn}
 	i.builtins["return"] = HostFunction{function: returnFn}
 	i.builtins["set"] = HostFunction{function: set}
 	i.builtins["while"] = HostFunction{function: while}

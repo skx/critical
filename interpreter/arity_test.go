@@ -39,6 +39,9 @@ func TestArity(t *testing.T) {
 		`puts "One" "Two"`,
 		`puts`,
 
+		`regexp`,
+		`regexp "one" "two" "three"`,
+
 		`return`,
 		`return "one" "two"`,
 		`set`,
