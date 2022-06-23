@@ -159,8 +159,8 @@ func (i *Interpreter) Evaluate() (string, error) {
 			out, e = fn.function(i, args)
 
 			// If the function returned a value then use that.
-			if e == errReturn {
-				continue
+			if e == ErrReturn {
+				return out, e
 			}
 
 			//
@@ -211,10 +211,14 @@ func (i *Interpreter) Evaluate() (string, error) {
 			// is over.
 			i.environment = oldE
 
+			// If the function returned a value then use that.
+			if e == ErrReturn {
+				return out, e
+			}
+
 			// Now we've restored the environment we can
 			// handle the error-detection
 			if e != nil {
-				fmt.Printf("Error calling user function:%s\n", e)
 				return "", e
 			}
 
@@ -282,6 +286,10 @@ func (i *Interpreter) Eval(str string) (string, error) {
 
 	// run the script
 	out, err := tmp.Evaluate()
+
+	if err == ErrReturn {
+		return out, err
+	}
 	if err != nil {
 		return "", err
 	}

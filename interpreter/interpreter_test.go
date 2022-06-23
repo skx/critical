@@ -118,8 +118,8 @@ star 2 19
 `)
 
 	out, err = x.Evaluate()
-	if err != nil {
-		t.Fatalf("unexpected error")
+	if err != ErrReturn {
+		t.Fatalf("unexpected error:%s", err)
 	}
 	if out != "38" {
 		t.Fatalf("wrong result for multiplication")
@@ -139,4 +139,88 @@ func TestInvalidType(t *testing.T) {
 	if err == nil {
 		t.Fatalf("expected error on illegal token, got none")
 	}
+}
+
+func TestReturnScope(t *testing.T) {
+
+	// Simple return from a procedure
+	simple := `
+proc test {} {
+    return 32
+    puts "NOT REACHED"
+    return 99
+}
+
+test
+`
+	e := New(simple)
+
+	out, err := e.Evaluate()
+	if err != ErrReturn {
+		t.Fatalf("unexpected error:%s", err)
+	}
+	if out != "32" {
+		t.Fatalf("unexpected return value: got %s", out)
+	}
+
+	// Return from an if
+	ifTrue := `
+proc test2 {} {
+    if { 1 } { return 32 } else { return 93 }
+}
+
+test2
+`
+	e = New(ifTrue)
+
+	out, err = e.Evaluate()
+	if err != ErrReturn {
+		t.Fatalf("unexpected error:%s", err)
+	}
+	if out != "32" {
+		t.Fatalf("unexpected return value: got %s", out)
+	}
+
+	// Simple return from an if
+	ifFalse := `
+proc test3 {} {
+    if { 0 } { return 32 } else { return 93 }
+}
+
+test3
+`
+	e = New(ifFalse)
+
+	out, err = e.Evaluate()
+	if err != ErrReturn {
+		t.Fatalf("unexpected error:%s", err)
+	}
+	if out != "93" {
+		t.Fatalf("unexpected return value: got %s", out)
+	}
+
+	// nested if
+	// Simple return from an if
+	nested := `
+proc test4 {} {
+    if { 1 } {
+       if { 1 } {
+           return 17
+       }
+    }
+    return 200
+}
+
+test4
+`
+	e = New(nested)
+
+	out, err = e.Evaluate()
+	if err != ErrReturn {
+		t.Fatalf("unexpected error:%s", err)
+	}
+	if out != "17" {
+		t.Fatalf("unexpected return value: got %s", out)
+	}
+
 }
