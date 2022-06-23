@@ -213,7 +213,7 @@ func (i *Interpreter) Evaluate() (string, error) {
 
 			// If the function returned a value then use that.
 			if e == ErrReturn {
-				return out, e
+				continue
 			}
 
 			// Now we've restored the environment we can

@@ -82,19 +82,11 @@ proc assert_equal {a b} {
 
             // both numbers: numeric comparison
             return [ assert $a == $b ]
-        } else {
-
-            // $a is number
-            // $b is string
-            // -> string compare
-            return [ assert $a eq $b ]
         }
-    } else {
-        // $a is string
-        // $b is unknown
-        // -> string compare
-        return [ assert $a eq $b ]
     }
+
+    // string compare
+    assert $a eq $b
 }
 
 //

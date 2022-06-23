@@ -118,7 +118,7 @@ star 2 19
 `)
 
 	out, err = x.Evaluate()
-	if err != ErrReturn {
+	if err != nil {
 		t.Fatalf("unexpected error:%s", err)
 	}
 	if out != "38" {
@@ -156,7 +156,7 @@ test
 	e := New(simple)
 
 	out, err := e.Evaluate()
-	if err != ErrReturn {
+	if err != nil {
 		t.Fatalf("unexpected error:%s", err)
 	}
 	if out != "32" {
@@ -174,7 +174,7 @@ test2
 	e = New(ifTrue)
 
 	out, err = e.Evaluate()
-	if err != ErrReturn {
+	if err != nil {
 		t.Fatalf("unexpected error:%s", err)
 	}
 	if out != "32" {
@@ -192,7 +192,7 @@ test3
 	e = New(ifFalse)
 
 	out, err = e.Evaluate()
-	if err != ErrReturn {
+	if err != nil {
 		t.Fatalf("unexpected error:%s", err)
 	}
 	if out != "93" {
@@ -200,7 +200,6 @@ test3
 	}
 
 	// nested if
-	// Simple return from an if
 	nested := `
 proc test4 {} {
     if { 1 } {
@@ -216,11 +215,30 @@ test4
 	e = New(nested)
 
 	out, err = e.Evaluate()
-	if err != ErrReturn {
+	if err != nil {
 		t.Fatalf("unexpected error:%s", err)
 	}
 	if out != "17" {
 		t.Fatalf("unexpected return value: got %s", out)
 	}
 
+	// Don't abort
+	abort := `
+proc test5 {} {
+   return "Steve"
+}
+
+test5
+return 313
+`
+
+	e = New(abort)
+
+	out, err = e.Evaluate()
+	if err != ErrReturn {
+		t.Fatalf("unexpected error:%s", err)
+	}
+	if out != "313" {
+		t.Fatalf("unexpected return value: got %s", out)
+	}
 }
