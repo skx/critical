@@ -6,6 +6,9 @@ import (
 )
 
 var (
+	// ErrReturn will be used to handle return-values from functions.
+	//
+	// It should be handled and expected by callers.
 	ErrReturn = errors.New("RETURN")
 )
 
