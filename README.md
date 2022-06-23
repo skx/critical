@@ -135,11 +135,6 @@ Read the file [input.tcl](input.tcl) to get a feel for the language, but in-brie
   * Including inside strings.
 * The ability to define procedures, via `proc`.
 
-Badly implemented features:
-
-* This fails as the spaces around `+` are necessary:
-  * `puts [expr $a+$b]`
-
 
 
 ## Missing Features
