@@ -60,6 +60,24 @@ proc ne {a b} {
     expr $a ne $b
 }
 
+//
+// Min / Max
+//
+proc min {a b} {
+    if {< $a $b } {
+        return $a
+    } else {
+        return $b
+    }
+}
+
+proc max {a b} {
+    if {> $a $b} {
+        return $a
+    } else {
+        return $b
+    }
+}
 
 // Assert a condition is true.
 proc assert {a b c} {
@@ -115,3 +133,35 @@ proc repeat {n body} {
 //   repeat 5 { incr foo }
 //   => foo is now 17 (i.e. 12 + 5)
 //
+
+
+
+//
+// Run a body multiple times, using an named variable for the index.
+//
+// You could use this like so:
+//
+//    loop cur 0 10 { puts "current iteration $cur ($min->$max)" }
+//    => current iteration 0 (0-10)
+//    => current iteration 1 (0-10)
+//    ..
+//    => current iteration 10 (0-10)
+//
+proc loop {var min max bdy} {
+    // result
+    set res ""
+
+    // set the variable
+    eval "set $var [set min]"
+
+    // Run the test
+    while {<= [set "$$var"] $max } {
+        set res [$bdy]
+
+        // This is a bit horrid
+        eval {incr $var}
+    }
+
+    // return the last result
+    $res
+}
