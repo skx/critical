@@ -46,11 +46,12 @@ func main() {
 	}
 
 	// Create the interpreter
-	interpreter := interpreter.New(input)
+	i := interpreter.New(input)
 
 	// Evaluate the input
-	out, err := interpreter.Evaluate()
-	if err != nil {
+	out, err := i.Evaluate()
+
+	if err != nil && err != interpreter.ErrReturn {
 		fmt.Printf("Error running program:%s\n", err)
 		return
 	}

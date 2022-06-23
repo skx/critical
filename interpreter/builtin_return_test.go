@@ -12,7 +12,7 @@ func TestReturn(t *testing.T) {
 	if err == nil {
 		t.Fatalf("expected an error")
 	}
-	if err != errReturn {
+	if err != ErrReturn {
 		t.Fatalf("got an error, but the wrong one:%v", err)
 	}
 }
