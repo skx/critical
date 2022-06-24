@@ -159,7 +159,7 @@ proc loop {var min max bdy} {
         set res [$bdy]
 
         // This is a bit horrid
-        eval {incr $var}
+        eval {incr "$var"}
     }
 
     // return the last result
