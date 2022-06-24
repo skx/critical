@@ -50,15 +50,6 @@ func New(input string) *Lexer {
 	// Lookup map of simple token-types.
 	//
 	l.lookup['\n'] = token.Token{Literal: "\\n", Type: token.NEWLINE}
-
-	// Setup simple maps for all arithmatic values
-	//
-	// Missing `-` as that will cause confusion with the negative
-	// number handling in the integer handling case.
-	l.lookup['+'] = token.Token{Literal: "+", Type: token.IDENT}
-	l.lookup['*'] = token.Token{Literal: "*", Type: token.IDENT}
-	l.lookup['/'] = token.Token{Literal: "/", Type: token.IDENT}
-
 	l.lookup[';'] = token.Token{Literal: ";", Type: token.SEMICOLON}
 	l.lookup[rune(0)] = token.Token{Literal: "", Type: token.EOF}
 
