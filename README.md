@@ -68,7 +68,6 @@ proc fib {x} {
     }
 }
 
-
 //
 // Lets run this in a loop
 //
@@ -109,6 +108,9 @@ I can compute that 1*1 = 1
 I can compute that 2*2 = 4
 ..
 ```
+
+Additional examples can be found beneath [examples/](examples/).
+
 
 
 ## Available Commands
