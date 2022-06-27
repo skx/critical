@@ -46,10 +46,14 @@ func TestExpr(t *testing.T) {
 		{Input: []string{"Kemp", "ne", "kemp"}, Output: "1"},
 		{Input: []string{"Kemp", "ne", "Kemp"}, Output: "0"},
 
+		// %
+		{Input: []string{"3", "%", "3"}, Output: "0"},
+		{Input: []string{"8", "%", "3"}, Output: "2"},
+
 		// errors
 		{Input: []string{"steve", "+", "3"}, Output: "", Error: "strconv"},
 		{Input: []string{"34", "+", "steve"}, Output: "", Error: "strconv"},
-		{Input: []string{"33", "%", "11"}, Output: "", Error: "unknown operation"},
+		{Input: []string{"33", "^", "11"}, Output: "", Error: "unknown operation"},
 	}
 
 	for _, test := range tests {

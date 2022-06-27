@@ -44,6 +44,8 @@ func expr(i *Interpreter, args []string) (string, error) {
 		return (fmt.Sprintf("%d", aV*bV)), nil
 	case "/":
 		return (fmt.Sprintf("%d", aV/bV)), nil
+	case "%":
+		return (fmt.Sprintf("%d", aV%bV)), nil
 	case "<":
 		if aV < bV {
 			return "1", nil

@@ -30,6 +30,9 @@ proc / {a b} {
 proc * {a b} {
     expr $a * $b
 }
+proc % {a b} {
+    expr $a % $b
+}
 
 //
 // Comparison functions
