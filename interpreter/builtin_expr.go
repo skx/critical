@@ -11,12 +11,12 @@ func expr(i *Interpreter, args []string) (string, error) {
 		return "", fmt.Errorf("expr requires three arguments, got %d", len(args))
 	}
 
-	aV, eA := strconv.Atoi(args[0])
+	aV, eA := strconv.ParseFloat(args[0], 64)
 	if eA != nil && (args[1] != "ne" && args[1] != "eq") {
 		return "", eA
 	}
 	op := args[1]
-	bV, eB := strconv.Atoi(args[2])
+	bV, eB := strconv.ParseFloat(args[2], 64)
 	if eB != nil && (args[1] != "ne" && args[1] != "eq") {
 		return "", eB
 	}
@@ -37,15 +37,41 @@ func expr(i *Interpreter, args []string) (string, error) {
 		return "0", nil
 
 	case "+":
-		return (fmt.Sprintf("%d", aV+bV)), nil
+		x := aV + bV
+
+		// an integer, really?
+		if x == float64(int(x)) {
+			return fmt.Sprintf("%d", int(x)), nil
+		}
+
+		return (fmt.Sprintf("%f", x)), nil
 	case "-":
-		return (fmt.Sprintf("%d", aV-bV)), nil
+		x := aV - bV
+		// an integer, really?
+		if x == float64(int(x)) {
+			return fmt.Sprintf("%d", int(x)), nil
+		}
+
+		return (fmt.Sprintf("%f", x)), nil
 	case "*":
-		return (fmt.Sprintf("%d", aV*bV)), nil
+		x := aV * bV
+		// an integer, really?
+		if x == float64(int(x)) {
+			return fmt.Sprintf("%d", int(x)), nil
+		}
+
+		return (fmt.Sprintf("%f", x)), nil
+
 	case "/":
-		return (fmt.Sprintf("%d", aV/bV)), nil
+		x := aV / bV
+		// an integer, really?
+		if x == float64(int(x)) {
+			return fmt.Sprintf("%d", int(x)), nil
+		}
+
+		return (fmt.Sprintf("%f", x)), nil
 	case "%":
-		return (fmt.Sprintf("%d", aV%bV)), nil
+		return (fmt.Sprintf("%d", int(aV)%int(bV))), nil
 	case "<":
 		if aV < bV {
 			return "1", nil

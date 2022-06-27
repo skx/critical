@@ -127,16 +127,15 @@ The complete list of standard [TCL commands](https://www.tcl.tk/man/tcl/TclCmd/c
 
 Read the file [input.tcl](input.tcl) to get a feel for the language, but in-brief you've got the following facilities available:
 
-* Mathematical operations for `expr`
-  * `+` `-` `/` `*` `<` `>` `<=` `>=`
-  * Integer support only.  Sigh.
+* Floating-point mathematical operations for `expr`
+  * `+` `-` `/` `*` `%`.
+* Comparison operations for `expr`
+  * `<` `>` `<=` `>=`, `==`, `!=`, `eq`, `ne`
 * Output to STDOUT via `puts`.
-* Inline command expansion.
-  * Including inside strings.
-* Inline variable expansion.
-  * Including inside strings.
+* Inline command expansion, for example `puts [* 3 4]`
+* Inline variable expansion, for example `puts "$$name is $name"`.
 * The ability to define procedures, via `proc`.
-
+  * See the later examples, or examine code such as [examples/prime.tcl](examples/prime.tcl).
 
 
 ## Missing Features
