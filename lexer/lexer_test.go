@@ -154,21 +154,9 @@ func TestParseNumber(t *testing.T) {
 	lex = New("10-10")
 	tok = lex.NextToken()
 	if tok.Type != token.ILLEGAL {
-		t.Fatalf("parsed number as wrong type")
+		t.Fatalf("parsed number as wrong type: %v", tok)
 	}
 	if !strings.Contains(tok.Literal, "'-' may only occur at the start of the number") {
-		t.Fatalf("got error, but wrong one: %s", tok.Literal)
-	}
-
-	// Now a number that's out of range.
-	lex = New("18446744073709551620")
-
-	tok = lex.NextToken()
-
-	if tok.Type != token.ILLEGAL {
-		t.Fatalf("parsed number as wrong type")
-	}
-	if !strings.Contains(tok.Literal, "out of range") {
 		t.Fatalf("got error, but wrong one: %s", tok.Literal)
 	}
 
@@ -234,10 +222,9 @@ func TestInteger(t *testing.T) {
 	tests := []TestCase{
 		{input: "3", output: "3"},
 		{input: "-3", output: "-3"},
-		{input: "-0", output: "0"},
+		{input: "-0", output: "-0"},
 		{input: "-10", output: "-10"},
-		{input: "0xff", output: "255"},
-		{input: "0b11111111", output: "255"},
+		{input: "0xff", output: "0xff"},
 	}
 
 	for _, tst := range tests {

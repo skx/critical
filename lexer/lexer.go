@@ -17,7 +17,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"strconv"
 	"strings"
 
 	"github.com/skx/critical/token"
@@ -170,13 +169,11 @@ func (l *Lexer) nextTokenReal() token.Token {
 	return tok
 }
 
-// readDecimal returns a token consisting of decimal numbers, base 10, 2, or
-// 16.
-func (l *Lexer) readDecimal() token.Token {
-
+// read number - this handles 0x1234 and 0b101010101 too.
+func (l *Lexer) readNumber() string {
 	str := ""
 
-	// We usually just accept digits, plus the negative unary marker.
+	// We usually just accept digits.
 	accept := "-0123456789"
 
 	// But if we have `0x` as a prefix we accept hexadecimal instead.
@@ -189,36 +186,42 @@ func (l *Lexer) readDecimal() token.Token {
 		accept = "b01"
 	}
 
-	// While we have a valid character append it to our
-	// result and keep reading/consuming characters.
 	for strings.Contains(accept, string(l.ch)) {
 		str += string(l.ch)
 		l.readChar()
 	}
 
-	// If we have a `-` it can only occur at the beginning
-	for _, chr := range []string{"-"} {
-		if strings.Contains(str, chr) {
-			if !strings.HasPrefix(str, chr) {
-				return token.Token{
-					Type:    token.ILLEGAL,
-					Literal: "'" + chr + "' may only occur at the start of the number",
-				}
-			}
+	return str
+}
+
+// readDecimal returns a token consisting of decimal numbers, base 10, 2, or
+// 16.
+func (l *Lexer) readDecimal() token.Token {
+
+	//
+	// Read an integer-number.
+	//
+	integer := l.readNumber()
+
+	if strings.Contains(integer, "-") && !strings.HasPrefix(integer, "-") {
+		return token.Token{
+			Type:    token.ILLEGAL,
+			Literal: "'-' may only occur at the start of the number",
 		}
 	}
 
-	// OK convert to an integer, which we'll later turn to a string.
 	//
-	// We do this so we can convert 0xff -> "255", or "0b0011" to "3".
-	val, err := strconv.ParseInt(str, 0, 64)
-	if err != nil {
-		tok := token.Token{Type: token.ILLEGAL, Literal: err.Error()}
-		return tok
-	}
+	// Now we might expect more:
+	//
+	//   .[digits]  -> Which converts us from an int to a float.
+	//
+	if l.ch == rune('.') && isDigit(l.peekChar()) {
 
-	// Now return that number as a string.
-	return token.Token{Type: token.NUMBER, Literal: fmt.Sprintf("%v", val)}
+		l.readChar()
+		fraction := l.readNumber()
+		return token.Token{Type: token.NUMBER, Literal: integer + "." + fraction}
+	}
+	return token.Token{Type: token.NUMBER, Literal: integer}
 }
 
 // read Identifier
