@@ -23,19 +23,25 @@ func decr(i *Interpreter, args []string) (string, error) {
 	}
 
 	// How much to decrease by?
-	decrease := 1
+	decrease := 1.0
 	if len(args) == 2 {
 		var err error
-		decrease, err = strconv.Atoi(args[1])
+		decrease, err = strconv.ParseFloat(args[1], 64)
 		if err != nil {
 			return "", err
 		}
 	}
 
-	orig, _ := strconv.Atoi(cur)
+	orig, _ := strconv.ParseFloat(cur, 64)
 	orig -= decrease
-	i.environment.Set(name, fmt.Sprintf("%d", orig))
 
-	return fmt.Sprintf("%d", orig), nil
+	// an integer, really?
+	if orig == float64(int(orig)) {
+		i.environment.Set(name, fmt.Sprintf("%d", int(orig)))
+		return fmt.Sprintf("%d", int(orig)), nil
+	}
+
+	i.environment.Set(name, fmt.Sprintf("%f", orig))
+	return fmt.Sprintf("%f", orig), nil
 
 }
