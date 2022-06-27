@@ -1,6 +1,6 @@
-// variable
-set a [ expr 2 + 2 ]
-puts "A is set to: $a"
+// Set a variable
+set a 43.1
+puts "Variable a, ($$a), is set to: $a"
 
 // variable expansion comes before execution.
 set a pu
@@ -8,10 +8,12 @@ set b ts
 $a$b "Hello World"
 
 // expansion, once again.
+// replacing things between the brackets with the output from executing them
 puts [set a 4]
 puts [set a]
 
-set name "Steve"
+// Variables can be longer.
+set name "Steve Kemp"
 puts "Hello World my name is $name"
 
 // We have a standard library, located in `stdlib/stdlib.tcl`
@@ -22,8 +24,9 @@ puts "Hello World my name is $name"
 // This will do "string" or "number" comparisons, and terminate
 // execution on failure.
 //
-assert_equal "$name" "Steve"
+assert_equal "$name" "Steve Kemp"
 assert_equal 9 [expr 3 * 3]
+assert_equal 7.4 [- [+ 7 1.4] 1]
 assert_equal 12 [+ 10 2]
 
 // conditional
@@ -38,8 +41,8 @@ if { "steve" } { puts "OK: steve was ok" } else { puts "steve was not ok" }
 //  "b" => "ts"
 //  "x" => UNDEFINED
 //
-if { $a } { puts "A is set" } else { puts "A is NOT set" }
-if { $x } { puts "X is set - This is a bug" } else { puts "X is NOT set" }
+if { $a } { puts "$$a is set" } else { puts "$$a is NOT set" }
+if { $x } { puts "$$x is set - This is a bug" } else { puts "$$x is NOT set" }
 
 //
 // Setup some variables for a loop.
@@ -57,6 +60,7 @@ while { expr $i <= $max } {
    incr i
 }
 
+// Show the sum
 puts "Sum of 1..10 (==(10x11)/2): $sum"
 
 
@@ -65,7 +69,7 @@ puts "Sum of 1..10 (==(10x11)/2): $sum"
 //
 // Our first user-defined function!
 //
-proc inc {x} { puts "X is $x"; expr $x + 1 }
+proc inc {x} { puts "$$x is $x"; expr $x + 1 }
 puts "3 inc is [inc 3]"
 
 //
