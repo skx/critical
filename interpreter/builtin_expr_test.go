@@ -16,21 +16,31 @@ func TestExpr(t *testing.T) {
 	tests := []TestCase{
 		// basic maths
 		{Input: []string{"3", "+", "3"}, Output: "6"},
+		{Input: []string{"3.1", "+", "3.3"}, Output: "6.400000"},
 		{Input: []string{"3", "*", "3"}, Output: "9"},
+		{Input: []string{"3.1", "*", "3"}, Output: "9.300000"},
 		{Input: []string{"3", "/", "3"}, Output: "1"},
+		{Input: []string{"3.1", "/", "3"}, Output: "1.033333"},
 		{Input: []string{"3", "-", "2"}, Output: "1"},
+		{Input: []string{"3.4", "-", "1.2"}, Output: "2.200000"},
 
 		// >
 		{Input: []string{"3", ">", "2"}, Output: "1"},
+		{Input: []string{"3.3", ">", "2"}, Output: "1"},
 		{Input: []string{"1", ">", "2"}, Output: "0"},
+		{Input: []string{"0.5", ">", "2"}, Output: "0"},
 
 		// >=
 		{Input: []string{"3", ">=", "3"}, Output: "1"},
+		{Input: []string{"3.1", ">=", "3"}, Output: "1"},
 		{Input: []string{"1", ">=", "2"}, Output: "0"},
+		{Input: []string{"0.74", ">=", "2"}, Output: "0"},
 
 		// <
 		{Input: []string{"3", "<", "3"}, Output: "0"},
+		{Input: []string{"3.0", "<", "3.0"}, Output: "0"},
 		{Input: []string{"1", "<", "2"}, Output: "1"},
+		{Input: []string{"1.4", "<", "2"}, Output: "1"},
 
 		// <=
 		{Input: []string{"3", "<=", "3"}, Output: "1"},
@@ -39,6 +49,10 @@ func TestExpr(t *testing.T) {
 		// ==
 		{Input: []string{"3", "==", "3"}, Output: "1"},
 		{Input: []string{"21", "==", "2"}, Output: "0"},
+
+		// !=
+		{Input: []string{"3", "!=", "3"}, Output: "0"},
+		{Input: []string{"21", "!=", "2"}, Output: "1"},
 
 		{Input: []string{"steve", "eq", "steve"}, Output: "1"},
 		{Input: []string{"steve", "eq", "Steve"}, Output: "0"},
