@@ -39,8 +39,15 @@ func while(i *Interpreter, args []string) (string, error) {
 
 			// Nop
 
+		} else if err == ErrExit {
+
+			// Exit
+			return out, err
+
 		} else if err != nil {
-			return "", err
+
+			// Another, unexpected error
+			return out, err
 		}
 
 		// repeat the conditional-test ahead of repeating the body
