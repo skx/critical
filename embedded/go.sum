@@ -1,0 +1,4 @@
+github.com/andybons/gogif v0.0.0-20140526152223-16d573594812 h1:WBBv0ka2SO7Ut4bpskb87E9cHNnJabqA6VoBTex0Jng=
+github.com/andybons/gogif v0.0.0-20140526152223-16d573594812/go.mod h1:lkVwYUDYv/mJZK69J7BP7HRUhHEAone7OQHFBRnhQdQ=
+github.com/skx/critical v0.0.0-20220628035141-39970ef66946 h1:OcE/OmL0GhBIy8bnHY0KtNJmlRt0vNr/Bw7WgQYFTHw=
+github.com/skx/critical v0.0.0-20220628035141-39970ef66946/go.mod h1:enBgnomum36QcFwWhO23LkrWH6onwFo+oUzpiR6jDPc=
