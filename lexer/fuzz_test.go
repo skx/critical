@@ -20,16 +20,15 @@ func FuzzLexer(f *testing.F) {
 
 	// Assignments
 	f.Add([]byte(`set a 3`))
+	f.Add([]byte(`set a 3.14`))
+	f.Add([]byte(`set a 0xff`))
+	f.Add([]byte(`set a 0b01010`))
 	f.Add([]byte(`set a`))
 	f.Add([]byte(`let b "Hello"`))
 
-	// Known errors are listed here.
-	//
-	// The purpose of fuzzing is to find panics, or unexpected errors.
-	//
-	// Some programs are obviously invalid though, so we don't want to
-	// report those known-bad things.
-	//	known := []string{}
+	// Errors
+	f.Add([]byte(`set a "steve`))
+	f.Add([]byte(`set a 10-21`))
 
 	f.Fuzz(func(t *testing.T, input []byte) {
 

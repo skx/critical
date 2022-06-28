@@ -19,6 +19,8 @@ func FuzzParser(f *testing.F) {
 
 	// Assignments
 	f.Add([]byte(`set a 3`))
+	f.Add([]byte(`set a 3.32`))
+	f.Add([]byte(`set a 10-10`))
 	f.Add([]byte(`set a`))
 
 	// and with usage
