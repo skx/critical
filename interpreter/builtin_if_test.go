@@ -14,19 +14,19 @@ func TestIf(t *testing.T) {
 	}
 
 	tests := []TestCase{
-		TestCase{
+		{
 			In:  `if { 1 } { "steve" }`,
 			Out: "steve",
 		},
-		TestCase{
+		{
 			In:  `if { 0 } { "steve" } else { "bob" }`,
 			Out: "bob",
 		},
-		TestCase{
+		{
 			In:  `if { 0 } { "steve" } `,
 			Out: "",
 		},
-		TestCase{
+		{
 			In:  `if { expr 3 + } { "steve" } `,
 			Out: "",
 			Err: " expr requires three arguments",

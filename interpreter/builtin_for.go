@@ -25,7 +25,6 @@ func forFn(i *Interpreter, args []string) (string, error) {
 	// error holder
 	var err error
 
-
 	// Evaluate the prologue
 	_, err = i.Eval(pro)
 	if err != nil {
@@ -71,7 +70,7 @@ func forFn(i *Interpreter, args []string) (string, error) {
 		// now the post-condition
 		_, err = i.Eval(epi)
 		if err != nil {
-			return "",err
+			return "", err
 		}
 	}
 
