@@ -1,9 +1,14 @@
 package interpreter
 
 import (
+	"errors"
 	"fmt"
-	"os"
-	"strconv"
+)
+
+var (
+	// ErrExit is the "error" code a script will terminate with if
+	// it finishes execution with an `exit` statement.
+	ErrExit = errors.New("EXIT")
 )
 
 // exitFn is the golang implementation of the TCL `exit` function.
@@ -14,18 +19,5 @@ func exitFn(i *Interpreter, args []string) (string, error) {
 		return "", fmt.Errorf("exit only accepts one argument, got %d", len(args))
 	}
 
-	// Convert to an integer
-	var num int
-	var err error
-
-	num, err = strconv.Atoi(args[0])
-	if err != nil {
-
-		// error?
-		num = 1
-	}
-
-	os.Exit(num)
-
-	return "unreached", nil
+	return args[0], ErrExit
 }

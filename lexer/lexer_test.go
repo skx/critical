@@ -159,7 +159,6 @@ func TestParseNumber(t *testing.T) {
 	if !strings.Contains(tok.Literal, "'-' may only occur at the start of the number") {
 		t.Fatalf("got error, but wrong one: %s", tok.Literal)
 	}
-
 }
 
 // TestIllegal looks for some illegal inputs
@@ -225,6 +224,8 @@ func TestInteger(t *testing.T) {
 		{input: "-0", output: "-0"},
 		{input: "-10", output: "-10"},
 		{input: "0xff", output: "0xff"},
+		{input: "0b101", output: "0b101"},
+		{input: "3.14", output: "3.14"},
 	}
 
 	for _, tst := range tests {

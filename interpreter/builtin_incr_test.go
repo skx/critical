@@ -59,5 +59,25 @@ func TestIncr(t *testing.T) {
 	}
 	if err != nil {
 		t.Fatalf("unexpected error increasing")
+
 	}
+
+	// floating-point increment
+	out, err = set(e, []string{"steve", "3.1"})
+	if out != "3.1" {
+		t.Fatalf("set had the wrong result %s != 3.1", out)
+	}
+	if err != nil {
+		t.Fatalf("unexpected error setting steve->3")
+	}
+
+	// Now increase it by one.
+	out, err = incr(e, []string{"steve"})
+	if out != "4.100000" {
+		t.Fatalf("incr had the wrong result: %s", out)
+	}
+	if err != nil {
+		t.Fatalf("unexpected error")
+	}
+
 }

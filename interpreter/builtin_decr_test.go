@@ -59,4 +59,22 @@ func TestDecr(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error decreasing")
 	}
+
+	// floating-point decrement
+	out, err = set(e, []string{"steve", "3.1"})
+	if out != "3.1" {
+		t.Fatalf("set had the wrong result %s != 3.1", out)
+	}
+	if err != nil {
+		t.Fatalf("unexpected error")
+	}
+
+	// Now decrease it by one.
+	out, err = decr(e, []string{"steve"})
+	if out != "2.100000" {
+		t.Fatalf("decr had the wrong result: %s", out)
+	}
+	if err != nil {
+		t.Fatalf("unexpected error")
+	}
 }
