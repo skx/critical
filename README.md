@@ -24,13 +24,16 @@ There is a simple introduction to this project, and TCL syntax, on my blog here:
 
 ## Building & Usage
 
-Build in the usual way, for example:
+This repository contains a TCL-like interpreter, along with a sample driver.
+
+You can build both in the way you'd expect for golang applications:
 
 ```sh
 $ go build .
 ```
 
-Execute with the name of a TCL-file to execute:
+Once build you can execute the application, supplying the path to a TCL
+script which you wish to execute.  For example:
 
 ```sh
     $ ./critical input.tcl
@@ -49,6 +52,14 @@ To disable the use of the standard library run:
    $ ./critical -no-stdlib path/to/file.tcl
 ```
 
+It is expected that you might prefer to embed this interpreter within your
+own (host) application(s), so you'll find an example of that beneath the
+[embedded/](embedded/) directory:
+
+* [Embedding the criTiCaL interpreter](embedded/)
+
+Note that the embedded example does not load the standard-library, but of
+course it could be updated to do so.
 
 
 ## Examples
