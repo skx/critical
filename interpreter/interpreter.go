@@ -12,12 +12,16 @@ import (
 	"github.com/skx/critical/token"
 )
 
+// HostFunctionSignature is the signature of a function implemented in golang, which
+// is exported to the TCL scripting environment.
+type HostFunctionSignature func(i *Interpreter, args []string) (string, error)
+
 // HostFunction represents a built-in function available to the TCL environment
 // which is implemented in golang.
 type HostFunction struct {
 
 	// function is the golang function to handle the call
-	function func(i *Interpreter, args []string) (string, error)
+	function HostFunctionSignature
 }
 
 // UserFunction represents a function which has been defined by the user,
@@ -66,26 +70,26 @@ func New(source string) *Interpreter {
 	// Bind the expected primitives
 
 	// These are internal functions that aren't real
-	i.builtins["#"] = HostFunction{function: comment}
-	i.builtins["//"] = HostFunction{function: comment}
+	i.RegisterBuiltin("#", comment)
+	i.RegisterBuiltin("//", comment)
 
 	// These are real primitives
-	i.builtins["append"] = HostFunction{function: appendFn}
-	i.builtins["break"] = HostFunction{function: breakFn}
-	i.builtins["continue"] = HostFunction{function: continueFn}
-	i.builtins["decr"] = HostFunction{function: decr}
-	i.builtins["eval"] = HostFunction{function: evalFn}
-	i.builtins["exit"] = HostFunction{function: exitFn}
-	i.builtins["expr"] = HostFunction{function: expr}
-	i.builtins["for"] = HostFunction{function: forFn}
-	i.builtins["if"] = HostFunction{function: ifFn}
-	i.builtins["incr"] = HostFunction{function: incr}
-	i.builtins["proc"] = HostFunction{function: proc}
-	i.builtins["puts"] = HostFunction{function: puts}
-	i.builtins["regexp"] = HostFunction{function: regexpFn}
-	i.builtins["return"] = HostFunction{function: returnFn}
-	i.builtins["set"] = HostFunction{function: set}
-	i.builtins["while"] = HostFunction{function: while}
+	i.RegisterBuiltin("append", appendFn)
+	i.RegisterBuiltin("break", breakFn)
+	i.RegisterBuiltin("continue", continueFn)
+	i.RegisterBuiltin("decr", decr)
+	i.RegisterBuiltin("eval", evalFn)
+	i.RegisterBuiltin("exit", exitFn)
+	i.RegisterBuiltin("expr", expr)
+	i.RegisterBuiltin("for", forFn)
+	i.RegisterBuiltin("if", ifFn)
+	i.RegisterBuiltin("incr", incr)
+	i.RegisterBuiltin("proc", proc)
+	i.RegisterBuiltin("puts", puts)
+	i.RegisterBuiltin("regexp", regexpFn)
+	i.RegisterBuiltin("return", returnFn)
+	i.RegisterBuiltin("set", set)
+	i.RegisterBuiltin("while", while)
 
 	return i
 }
@@ -170,7 +174,10 @@ func (i *Interpreter) Evaluate() (string, error) {
 			// Here we just return them, and they'll do the
 			// right thing.
 			//
-			if e == errBreak || e == errContinue {
+			// The same thing applies more generally to the
+			// exit handler
+			//
+			if e == errBreak || e == errContinue || e == ErrExit {
 				return out, e
 			}
 
@@ -214,6 +221,11 @@ func (i *Interpreter) Evaluate() (string, error) {
 			// If the function returned a value then use that.
 			if e == ErrReturn {
 				continue
+			}
+
+			// Exit inside a proc.
+			if e == ErrExit {
+				return out, e
 			}
 
 			// Now we've restored the environment we can
@@ -283,11 +295,12 @@ func (i *Interpreter) Eval(str string) (string, error) {
 	// Hacky way to ensure the child environment has the same
 	// functions as we do.
 	tmp.functions = i.functions
+	tmp.builtins = i.builtins
 
 	// run the script
 	out, err := tmp.Evaluate()
 
-	if err == ErrReturn {
+	if err == ErrReturn || err == ErrExit {
 		return out, err
 	}
 	if err != nil {
@@ -328,4 +341,9 @@ func (i *Interpreter) expandEval(str string) string {
 	}
 
 	return str
+}
+
+// RegisterBuiltin registers a builtin function.
+func (i *Interpreter) RegisterBuiltin(name string, fn HostFunctionSignature) {
+	i.builtins[name] = HostFunction{function: fn}
 }
