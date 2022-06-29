@@ -32,15 +32,15 @@ You can build both in the way you'd expect for golang applications:
 $ go build .
 ```
 
-Once build you can execute the application, supplying the path to a TCL
+Once built you can execute the application, supplying the path to a TCL
 script which you wish to execute.  For example:
 
 ```sh
-    $ ./critical input.tcl
-    A is set to: 4.000000
-    Hello World
-    4
-    4
+    $ ./critical examples/prime.tcl
+    0
+    1
+    2 is prime
+    3 is prime
     ..
 ```
 
@@ -52,14 +52,16 @@ To disable the use of the standard library run:
    $ ./critical -no-stdlib path/to/file.tcl
 ```
 
-It is expected that you might prefer to embed this interpreter within your
-own (host) application(s), so you'll find an example of that beneath the
-[embedded/](embedded/) directory:
+Generally the point of a scripting language is you can embed it inside
+a (host) application of your own - exporting project-specific variables
+and functions.
+
+You'll find an example of doing that beneath the [embedded/](embedded/) directory:
 
 * [Embedding the criTiCaL interpreter](embedded/)
 
-Note that the embedded example does not load the standard-library, but of
-course it could be updated to do so.
+> **Note** that the embedded example does not load the standard-library, but of course it could be updated to do so.
+
 
 
 ## Examples
@@ -114,13 +116,13 @@ while {<= $a 10} {
 This example is contained within this repository as [picol.tcl](picol.tcl), so you can run it directly:
 
 ```sh
-go build . && ./critical ./picol.tcl
-I can compute that 1*1 = 1
-I can compute that 2*2 = 4
-..
+     $ ./critical ./picol.tcl
+     I can compute that 1*1 = 1
+     I can compute that 2*2 = 4
+     ..
 ```
 
-Additional examples can be found beneath [examples/](examples/).
+Additional TCL-code can be found beneath [examples/](examples/).
 
 
 
@@ -128,7 +130,7 @@ Additional examples can be found beneath [examples/](examples/).
 
 The following commands are available, and work as you'd expect:
 
-* `append`, `break`, `continue`, `decr`, `eval`, `exit`, `expr`, `for`, `if`, `incr`, `proc`, `puts`, `regexp`, `return`, `set`, `while`.
+* `append`, `break`, `continue`, `decr`, `env`, `eval`, `exit`, `expr`, `for`, `if`, `incr`, `proc`, `puts`, `regexp`, `return`, `set`, `while`.
 
 The complete list of standard [TCL commands](https://www.tcl.tk/man/tcl/TclCmd/contents.html) will almost certainly never be implemented, but pull-request to add omissions you need will be applied with thanks.
 
@@ -155,13 +157,13 @@ The biggest missing feature is the complete absence of support for lists of any 
 
 The other obvious missing feature is support for the `upvalue` command, which means we're always a little at risk of scope-related issues.
 
-Adding `upvalue` would be possible, but adding list-processing would be more work than I'd prefer to carry out at this time.
+Adding `upvalue` would be possible, but adding list-processing would be more work than I'd prefer to carry out at this time - see #19 for details of what would be required to implement this support.
 
 
 
 ## Testing
 
-Our code has near 100% test-coverage, which you can exercise via the standard golang facilities:
+Our code has 100% test-coverage, which you can exercise via the standard golang facilities:
 
 ```sh
 $ go test ./...
