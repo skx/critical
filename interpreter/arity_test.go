@@ -18,6 +18,9 @@ func TestArity(t *testing.T) {
 		`exit`,
 		`exit "one" "two"`,
 
+		`env`,
+		`env "one" "two"`,
+
 		`expr 1`,
 		`expr 1 + `,
 		`expr 1 + 2 + 3`,

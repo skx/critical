@@ -78,6 +78,7 @@ func New(source string) *Interpreter {
 	i.RegisterBuiltin("break", breakFn)
 	i.RegisterBuiltin("continue", continueFn)
 	i.RegisterBuiltin("decr", decr)
+	i.RegisterBuiltin("env", env)
 	i.RegisterBuiltin("eval", evalFn)
 	i.RegisterBuiltin("exit", exitFn)
 	i.RegisterBuiltin("expr", expr)
