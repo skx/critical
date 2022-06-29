@@ -250,11 +250,15 @@ func (i *Interpreter) Evaluate() (string, error) {
 		if cmd.Command.Type == token.NUMBER {
 			return cmd.Command.Literal, nil
 		}
+		if cmd.Command.Type == token.VARIABLE {
+			// The actual literal will have been updated
+			return i.expandString(cmd.Command.Literal), nil
+		}
 
 		//
 		// Otherwise we just return an error.
 		//
-		// return out"", fmt.Errorf("unknown command '%s'", name)
+		return "", fmt.Errorf("unknown command '%s':%v", name, cmd)
 
 	}
 	return out, err
