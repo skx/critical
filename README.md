@@ -3,6 +3,16 @@
 [![license](https://img.shields.io/github/license/skx/critical.svg)](https://github.com/skx/critical/blob/master/LICENSE)
 
 
+* [criTiCaL - A TCL interpreter written in golang](#critical---a-tcl-interpreter-written-in-golang)
+* [Building & Usage](#building--usage)
+* [Examples](#examples)
+  * [Available Commands](#available-commands)
+  * [Features](#features)
+  * [Missing Features](#missing-features)
+* [Testing](#testing)
+* [See Also](#see-also)
+* [Bugs?](#bugs?)
+
 # criTiCaL - A TCL interpreter written in golang
 
 After re-reading [TCL the Misunderstood](http://antirez.com/articoli/tclmisunderstood.html), I decided to create a simple TCL evaluator of my own.  This project is the result, and it has feature-parity with the two existing "small TCL" projects, written in C, which I examined:
@@ -126,7 +136,7 @@ Additional TCL-code can be found beneath [examples/](examples/).
 
 
 
-## Available Commands
+### Available Commands
 
 The following commands are available, and work as you'd expect:
 
@@ -136,7 +146,7 @@ The complete list of standard [TCL commands](https://www.tcl.tk/man/tcl/TclCmd/c
 
 
 
-## Features
+### Features
 
 Read the file [input.tcl](input.tcl) to get a feel for the language, but in-brief you've got the following facilities available:
 
@@ -151,7 +161,7 @@ Read the file [input.tcl](input.tcl) to get a feel for the language, but in-brie
   * See the later examples, or examine code such as [examples/prime.tcl](examples/prime.tcl).
 
 
-## Missing Features
+### Missing Features
 
 The biggest missing feature is the complete absence of support for lists of any kind.  This is common in the more minimal-TCL interpreters I examined.
 
@@ -181,6 +191,21 @@ cd lexer
 go test -fuzztime=300s -parallel=1 -fuzz=FuzzLexer -v
 
 ```
+
+
+
+# See Also
+
+This repository was put together after [experimenting with a scripting language](https://github.com/skx/monkey/), an [evaluation engine](https://github.com/skx/evalfilter/), putting together a [FORTH-like scripting language](https://github.com/skx/foth), and writing a [BASIC interpreter](https://github.com/skx/gobasic).
+
+I've also played around with a couple of compilers which might be interesting to refer to:
+
+* Brainfuck compiler:
+  * [https://github.com/skx/bfcc/](https://github.com/skx/bfcc/)
+* A math-compiler:
+  * [https://github.com/skx/math-compiler](https://github.com/skx/math-compiler)
+
+
 
 
 ## Bugs?
