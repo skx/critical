@@ -2,6 +2,7 @@ package interpreter
 
 import (
 	"fmt"
+	"math"
 	"strconv"
 )
 
@@ -24,7 +25,10 @@ func init() {
 	ops["-"] = minusFn
 	ops["/"] = divideFn
 	ops["*"] = multiplyFn
+
+	// modulus & power
 	ops["%"] = modFn
+	ops["**"] = powFn
 
 	// comparisons
 	ops["<"] = lessFn
@@ -133,6 +137,7 @@ func multiplyFn(a float64, b float64) (string, error) {
 
 func divideFn(a float64, b float64) (string, error) {
 	x := a / b
+
 	// an integer, really?
 	if x == float64(int(x)) {
 		return fmt.Sprintf("%d", int(x)), nil
@@ -144,6 +149,18 @@ func divideFn(a float64, b float64) (string, error) {
 func modFn(a float64, b float64) (string, error) {
 
 	return (fmt.Sprintf("%d", int(a)%int(b))), nil
+}
+
+func powFn(a float64, b float64) (string, error) {
+
+	out := math.Pow(a, b)
+
+	// an integer, really?
+	if out == float64(int(out)) {
+		return fmt.Sprintf("%d", int(out)), nil
+	}
+
+	return (fmt.Sprintf("%f", out)), nil
 }
 
 func lessFn(a float64, b float64) (string, error) {
