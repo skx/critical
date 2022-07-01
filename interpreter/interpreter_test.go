@@ -242,3 +242,15 @@ return 313
 		t.Fatalf("unexpected return value: got %s", out)
 	}
 }
+
+func TestUnknownWord(t *testing.T) {
+	e := New("moi")
+
+	_, err := e.Evaluate()
+	if err == nil {
+		t.Fatalf("expected an error, got none:%s", err)
+	}
+	if !strings.Contains(err.Error(), "unknown command") {
+		t.Fatalf("got an error, wrong kind:%s", err)
+	}
+}
