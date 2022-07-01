@@ -7,8 +7,11 @@ func TestGetSet(t *testing.T) {
 
 	e := New()
 
+	out := ""
+	ok := false
+
 	// by default the environment is empty
-	out, ok := e.Get("FOO")
+	_, ok = e.Get("FOO")
 	if ok {
 		t.Fatalf("fetching missing variable shouldn't work")
 	}
@@ -27,7 +30,7 @@ func TestGetSet(t *testing.T) {
 	e.Clear("FOO")
 
 	// Fetching should now fail
-	out, ok = e.Get("FOO")
+	_, ok = e.Get("FOO")
 	if ok {
 		t.Fatalf("fetching missing variable shouldn't work")
 	}
@@ -64,7 +67,7 @@ func TestScopedSet(t *testing.T) {
 	}
 
 	// parent should not
-	val, ok = p.Get("NAME")
+	_, ok = p.Get("NAME")
 	if ok {
 		t.Fatalf("shouldn't be able to get child-variable in parent")
 	}
