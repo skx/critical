@@ -138,6 +138,10 @@ func multiplyFn(a float64, b float64) (string, error) {
 func divideFn(a float64, b float64) (string, error) {
 	x := a / b
 
+	if b == 0 {
+		return "", fmt.Errorf("attempted division by zero")
+	}
+
 	// an integer, really?
 	if x == float64(int(x)) {
 		return fmt.Sprintf("%d", int(x)), nil

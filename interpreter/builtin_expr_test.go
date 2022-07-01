@@ -19,8 +19,11 @@ func TestExpr(t *testing.T) {
 		{Input: []string{"3.1", "+", "3.3"}, Output: "6.400000"},
 		{Input: []string{"3", "*", "3"}, Output: "9"},
 		{Input: []string{"3.1", "*", "3"}, Output: "9.300000"},
+
 		{Input: []string{"3", "/", "3"}, Output: "1"},
 		{Input: []string{"3.1", "/", "3"}, Output: "1.033333"},
+		{Input: []string{"1", "/", "0"}, Error: "vision by zero"},
+
 		{Input: []string{"3", "-", "2"}, Output: "1"},
 		{Input: []string{"3.4", "-", "1.2"}, Output: "2.200000"},
 
@@ -63,6 +66,13 @@ func TestExpr(t *testing.T) {
 		// %
 		{Input: []string{"3", "%", "3"}, Output: "0"},
 		{Input: []string{"8", "%", "3"}, Output: "2"},
+
+		// power
+		{Input: []string{"10", "**", "1"}, Output: "10"},
+		{Input: []string{"10", "**", "2"}, Output: "100"},
+		{Input: []string{"10", "**", "3"}, Output: "1000"},
+		{Input: []string{"2", "**", "3"}, Output: "8"},
+		{Input: []string{"2.3", "**", "3.5"}, Output: "18.452169"},
 
 		// errors
 		{Input: []string{"steve", "+", "3"}, Output: "", Error: "strconv"},
