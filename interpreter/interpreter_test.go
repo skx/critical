@@ -7,7 +7,10 @@ import (
 
 func TestExpandEval(t *testing.T) {
 
-	x := New(`puts [ expr 1 + [ expr 2 + 3 ] ]`)
+	x, er := New(`puts [ expr 1 + [ expr 2 + 3 ] ]`)
+	if er != nil {
+		t.Fatalf("unexpected error creating interpreter")
+	}
 
 	out, err := x.Evaluate()
 	if err != nil {
@@ -21,7 +24,11 @@ func TestExpandEval(t *testing.T) {
 	}
 
 	// Ensure that we don't lose characters
-	x = New(`puts "[expr 3 + 3]ab"`)
+	x, er = New(`puts "[expr 3 + 3]ab"`)
+	if er != nil {
+		t.Fatalf("unexpected error creating interpreter")
+	}
+
 	out, err = x.Evaluate()
 
 	if err != nil {
@@ -34,7 +41,10 @@ func TestExpandEval(t *testing.T) {
 
 func TestExpandString(t *testing.T) {
 
-	x := New(`set a pu ; set b ts ; $a$b "OK"`)
+	x, er := New(`set a pu ; set b ts ; $a$b "OK"`)
+	if er != nil {
+		t.Fatalf("unexpected error creating interpreter")
+	}
 
 	out, err := x.Evaluate()
 	if err != nil {
@@ -56,12 +66,16 @@ func TestExpandString(t *testing.T) {
 func TestUserFunction(t *testing.T) {
 
 	// Define a function call it
-	x := New(`
+	x, er := New(`
 proc squared {x} { expr $x * $x }
 proc cubed {x} { expr $x * [squared $x] }
 
 puts [cubed 9]
 `)
+
+	if er != nil {
+		t.Fatalf("unexpected error creating interpreter")
+	}
 
 	out, err := x.Evaluate()
 	if err != nil {
@@ -77,11 +91,14 @@ puts [cubed 9]
 	//
 	// Now call a function with an error - wrong argument count
 	//
-	x = New(`
+	x, er = New(`
 proc multiply {x y} { expr $x * $y }
 
 multiply 2
 `)
+	if er != nil {
+		t.Fatalf("unexpected error creating interpreter")
+	}
 
 	_, err = x.Evaluate()
 	if err == nil {
@@ -94,11 +111,14 @@ multiply 2
 	//
 	// Another function with an error, wrong type
 	//
-	x = New(`
+	x, er = New(`
 proc multiply {x y} { expr $x * $y }
 
 multiply 2 "steve"
 `)
+	if er != nil {
+		t.Fatalf("unexpected error creating interpreter")
+	}
 
 	_, err = x.Evaluate()
 	if err == nil {
@@ -111,11 +131,14 @@ multiply 2 "steve"
 	//
 	// A function with an explicit return :)
 	//
-	x = New(`
+	x, er = New(`
 proc star {x y} { return [expr $x * $y] }
 
 star 2 19
 `)
+	if er != nil {
+		t.Fatalf("unexpected error creating interpreter")
+	}
 
 	out, err = x.Evaluate()
 	if err != nil {
@@ -133,7 +156,10 @@ func TestInvalidType(t *testing.T) {
 	//
 	//  i.e. "FOO" is the same as "[ FOO ]"
 	//
-	x := New(`[ expr 1 + 1 ]`)
+	x, er := New(`[ expr 1 + 1 ]`)
+	if er != nil {
+		t.Fatalf("unexpected error creating interpreter")
+	}
 
 	_, err := x.Evaluate()
 	if err == nil {
@@ -153,7 +179,10 @@ proc test {} {
 
 test
 `
-	e := New(simple)
+	e, er := New(simple)
+	if er != nil {
+		t.Fatalf("unexpected error creating interpreter")
+	}
 
 	out, err := e.Evaluate()
 	if err != nil {
@@ -171,7 +200,10 @@ proc test2 {} {
 
 test2
 `
-	e = New(ifTrue)
+	e, er = New(ifTrue)
+	if er != nil {
+		t.Fatalf("unexpected error creating interpreter")
+	}
 
 	out, err = e.Evaluate()
 	if err != nil {
@@ -189,7 +221,10 @@ proc test3 {} {
 
 test3
 `
-	e = New(ifFalse)
+	e, er = New(ifFalse)
+	if er != nil {
+		t.Fatalf("unexpected error creating interpreter")
+	}
 
 	out, err = e.Evaluate()
 	if err != nil {
@@ -212,7 +247,10 @@ proc test4 {} {
 
 test4
 `
-	e = New(nested)
+	e, er = New(nested)
+	if er != nil {
+		t.Fatalf("unexpected error creating interpreter")
+	}
 
 	out, err = e.Evaluate()
 	if err != nil {
@@ -232,7 +270,10 @@ test5
 return 313
 `
 
-	e = New(abort)
+	e, er = New(abort)
+	if er != nil {
+		t.Fatalf("unexpected error creating interpreter")
+	}
 
 	out, err = e.Evaluate()
 	if err != ErrReturn {
@@ -244,7 +285,10 @@ return 313
 }
 
 func TestUnknownWord(t *testing.T) {
-	e := New("moi")
+	e, er := New("moi")
+	if er != nil {
+		t.Fatalf("unexpected error creating interpreter")
+	}
 
 	_, err := e.Evaluate()
 	if err == nil {
@@ -253,4 +297,40 @@ func TestUnknownWord(t *testing.T) {
 	if !strings.Contains(err.Error(), "unknown command") {
 		t.Fatalf("got an error, wrong kind:%s", err)
 	}
+}
+
+func TestRepeat(t *testing.T) {
+
+	//
+	// Source code of the script we're going to run
+	//
+	src := `puts 34`
+
+	//
+	// Now run the thing in a loop
+	//
+	for n := 0; n < 10; n++ {
+		//
+		// Create the execution.
+		//
+		i, er := New(src)
+		if er != nil {
+			t.Fatalf("unexpected error creating interpreter")
+		}
+
+		//
+		// return values
+		//
+		var err error
+		var out string
+
+		out, err = i.Evaluate()
+		if err != nil {
+			t.Fatalf("got unexpected error:%s", err)
+		}
+		if out != "34" {
+			t.Fatalf("unexpected output: '%s'", out)
+		}
+	}
+
 }

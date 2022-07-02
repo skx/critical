@@ -58,7 +58,11 @@ func main() {
 
 	// Create the interpreter instance
 	fmt.Printf("Running script\n")
-	e = interpreter.New(string(data))
+	e, err = interpreter.New(string(data))
+	if err != nil {
+		fmt.Printf("Error creating interpreter: %s\n", err)
+		return
+	}
 
 	e.RegisterBuiltin("direction", direction)
 	e.RegisterBuiltin("forwards", forwards)

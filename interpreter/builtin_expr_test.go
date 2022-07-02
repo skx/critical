@@ -82,7 +82,10 @@ func TestExpr(t *testing.T) {
 
 	for _, test := range tests {
 
-		e := New("")
+		e, er := New("")
+		if er != nil {
+			t.Fatalf("unexpected error creating interpreter")
+		}
 
 		out, err := expr(e, test.Input)
 		if err != nil {

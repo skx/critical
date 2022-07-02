@@ -55,7 +55,10 @@ func TestArity(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		x := New(test)
+		x, er := New(test)
+		if er != nil {
+			t.Fatalf("unexpected error creating interpreter")
+		}
 
 		_, err := x.Evaluate()
 

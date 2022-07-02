@@ -36,7 +36,11 @@ func TestIf(t *testing.T) {
 	for _, test := range tests {
 
 		// Run the example
-		e := New(test.In)
+		e, er := New(test.In)
+		if er != nil {
+			t.Fatalf("unexpected error creating interpreter")
+		}
+
 		out, err := e.Evaluate()
 
 		// Is this error expected?

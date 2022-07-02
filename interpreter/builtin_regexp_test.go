@@ -4,7 +4,10 @@ import "testing"
 
 func TestRegexp(t *testing.T) {
 
-	e := New("")
+	e, er := New("")
+	if er != nil {
+		t.Fatalf("unexpected error creating interpreter")
+	}
 
 	// Test a valid match
 	out, err := regexpFn(e, []string{

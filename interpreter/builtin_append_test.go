@@ -12,7 +12,11 @@ for {set i 1} {expr $i <= 10} {incr i} {
 $var
 `
 	// Run the example
-	e := New(src)
+	e, er := New(src)
+	if er != nil {
+		t.Fatalf("unexpected error creating interpreter")
+	}
+
 	out, err := e.Evaluate()
 
 	// Is this error expected?

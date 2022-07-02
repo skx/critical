@@ -4,7 +4,10 @@ import "testing"
 
 func TestProc(t *testing.T) {
 
-	e := New("")
+	e, er := New("")
+	if er != nil {
+		t.Fatalf("unexpected error creating interpreter")
+	}
 
 	_, ok := e.functions["squared"]
 	if ok {

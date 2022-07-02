@@ -5,7 +5,11 @@ import "testing"
 func TestIncr(t *testing.T) {
 
 	// Create an empty interpreter
-	e := New("")
+	e, er := New("")
+	if er != nil {
+		t.Fatalf("unexpected error creating interpreter")
+	}
+
 	out, err := e.Evaluate()
 
 	if err != nil {

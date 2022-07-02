@@ -38,7 +38,11 @@ puts $sum
 `
 
 	// Run the basic loop
-	e := New(basic)
+	e, er := New(basic)
+	if er != nil {
+		t.Fatalf("unexpected error creating interpreter")
+	}
+
 	out, err := e.Evaluate()
 
 	// Is this error expected?
@@ -50,7 +54,11 @@ puts $sum
 	}
 
 	// Run the break loop
-	e = New(breakLoop)
+	e, er = New(breakLoop)
+	if er != nil {
+		t.Fatalf("unexpected error creating interpreter")
+	}
+
 	out, err = e.Evaluate()
 
 	// Is this error expected?
@@ -62,7 +70,11 @@ puts $sum
 	}
 
 	// Run the continue loop
-	e = New(continueLoop)
+	e, er = New(continueLoop)
+	if er != nil {
+		t.Fatalf("unexpected error creating interpreter")
+	}
+
 	out, err = e.Evaluate()
 
 	// Is this error expected?
@@ -82,7 +94,11 @@ puts $sum
 	}
 
 	for _, test := range tests {
-		e = New(test)
+		e, er = New(test)
+		if er != nil {
+			t.Fatalf("unexpected error creating interpreter")
+		}
+
 		_, err = e.Evaluate()
 
 		if err == nil {

@@ -31,7 +31,11 @@ foo 17
 `
 
 	// Run the exit-program
-	e := New(exit)
+	e, er := New(exit)
+	if er != nil {
+		t.Fatalf("unexpected error creating interpreter")
+	}
+
 	out, err := e.Evaluate()
 
 	// Is this error expected?
@@ -46,7 +50,11 @@ foo 17
 	}
 
 	// Run the loop-program
-	e = New(basic)
+	e, er = New(basic)
+	if er != nil {
+		t.Fatalf("unexpected error creating interpreter")
+	}
+
 	out, err = e.Evaluate()
 
 	// Is this error expected?
@@ -61,7 +69,11 @@ foo 17
 	}
 
 	// Run the proc-program
-	e = New(proc)
+	e, er = New(proc)
+	if er != nil {
+		t.Fatalf("unexpected error creating interpreter")
+	}
+
 	out, err = e.Evaluate()
 
 	// Is this error expected?

@@ -38,16 +38,15 @@ type UserFunction struct {
 // Interpreter holds the interpreters state.
 type Interpreter struct {
 
-	// parser is the object we use to transform the source into
-	// a program we can evaluate.
-	parser *parser.Parser
-
 	// builtins contains pointers to the golang implementations of
 	// the TCL functions.
 	builtins map[string]HostFunction
 
 	// functions contain user-defined functions, written in TCL.
 	functions map[string]UserFunction
+
+	// program is the parsed program.
+	program []parser.Command
 
 	// environment holds any variable-references the user has defined.
 	//
@@ -57,14 +56,24 @@ type Interpreter struct {
 }
 
 // New creates a new object to interpret.
-func New(source string) *Interpreter {
+func New(source string) (*Interpreter, error) {
 
 	// Create the object we'll return
 	i := &Interpreter{
 		builtins:    make(map[string]HostFunction),
 		environment: environment.New(),
 		functions:   make(map[string]UserFunction),
-		parser:      parser.New(source),
+	}
+
+	// parser is the object we use to transform the source into
+	// a program we can evaluate.
+	parser := parser.New(source)
+
+	// Parse the program to find any obvious errors immediately.
+	var err error
+	i.program, err = parser.Parse()
+	if err != nil {
+		return nil, err
 	}
 
 	// Bind the expected primitives
@@ -92,24 +101,21 @@ func New(source string) *Interpreter {
 	i.RegisterBuiltin("set", set)
 	i.RegisterBuiltin("while", while)
 
-	return i
+	return i, nil
 }
 
 // Evaluate parses the program source, and executes the program.
 func (i *Interpreter) Evaluate() (string, error) {
 
-	// Parse the program, if there were errors bail immediately.
-	program, err := i.parser.Parse()
-	if err != nil {
-		return "", err
-	}
-
 	// Output of the evaluation is the output received from the
 	// last statement which was executed.
 	out := ""
 
+	// Holder for any error we might receive
+	var err error
+
 	// For each parsed command, evaluate it
-	for _, cmd := range program {
+	for _, cmd := range i.program {
 
 		// The name of the command we're going to run
 		name := ""
@@ -291,7 +297,10 @@ func (i *Interpreter) expandString(str string) string {
 func (i *Interpreter) Eval(str string) (string, error) {
 
 	// sub-evaluator.  horrid
-	tmp := New(str)
+	tmp, er := New(str)
+	if er != nil {
+		return "", er
+	}
 
 	// Hacky way to ensure that any updates to the variables
 	// affect this environment too, not just the child one.
