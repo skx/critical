@@ -91,8 +91,19 @@ func (l *Lexer) NextToken() token.Token {
 // nextTokenReal does the real work of consuming and returning the next
 // token from our input string.
 func (l *Lexer) nextTokenReal() token.Token {
+
+	// Return value
 	var tok token.Token
+
+	// Skip whitespace
 	l.skipWhitespace()
+
+	// skip single-line comments
+	if l.ch == rune('#') ||
+		(l.ch == rune('/') && l.peekChar() == rune('/')) {
+		l.skipComment()
+		return (l.NextToken())
+	}
 
 	// Was this a simple token-type?
 	val, ok := l.lookup[l.ch]
@@ -238,6 +249,29 @@ func (l *Lexer) skipWhitespace() {
 	for isWhitespace(l.ch) {
 		l.readChar()
 	}
+}
+
+// skip comment (until the end of the line).
+func (l *Lexer) skipComment() {
+
+	// Read forever, or until we've ended.
+	for l.ch != rune(0) {
+
+		// Get the next char
+		l.readChar()
+
+		// if it's a newline
+		if l.ch == '\n' {
+			// skip any other newlines
+			for l.ch == '\n' {
+				l.readChar()
+			}
+
+			// and return
+			break
+		}
+	}
+	l.skipWhitespace()
 }
 
 // read string
