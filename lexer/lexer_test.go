@@ -39,7 +39,7 @@ func TestEmpty(t *testing.T) {
 
 // TestVariable does simple variable testing.
 func TestVariable(t *testing.T) {
-	input := `$a+$b`
+	input := `$a+$b // Comment goes here`
 
 	tests := []struct {
 		expectedType    token.Type
@@ -113,7 +113,7 @@ func TestUnterminatedString(t *testing.T) {
 // TestContinue checks we continue newlines.
 func TestContinue(t *testing.T) {
 	input := `"This is a test \
-which continues"`
+which continues" # With a comment at the end`
 
 	tests := []struct {
 		expectedType    token.Type
@@ -293,4 +293,39 @@ func TestIf(t *testing.T) {
 			t.Fatalf("tests[%d] - Literal wrong, expected=%q, got=%q: %v", i, tt.expectedLiteral, tok.Literal, tok)
 		}
 	}
+}
+
+func TestComments(t *testing.T) {
+
+	// Same input as in TestIf
+	input := `// This is a comment
+if { $i < 10 } { puts "OK" } else { puts "FAILED"}
+// so is this
+
+
+# Comments are cool`
+
+	tests := []struct {
+		expectedType    token.Type
+		expectedLiteral string
+	}{
+		{token.IDENT, "if"},
+		{token.BLOCK, " $i < 10 "},
+		{token.BLOCK, " puts \"OK\" "},
+		{token.IDENT, "else"},
+		{token.BLOCK, " puts \"FAILED\""},
+		{token.NEWLINE, "\\n"},
+		{token.EOF, ""},
+	}
+	l := New(input)
+	for i, tt := range tests {
+		tok := l.NextToken()
+		if tok.Type != tt.expectedType {
+			t.Fatalf("tests[%d] - tokentype wrong, expected=%q, got=%q: %v", i, tt.expectedType, tok.Type, tok)
+		}
+		if tok.Literal != tt.expectedLiteral {
+			t.Fatalf("tests[%d] - Literal wrong, expected=%q, got=%q: %v", i, tt.expectedLiteral, tok.Literal, tok)
+		}
+	}
+
 }

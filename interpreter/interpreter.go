@@ -77,12 +77,6 @@ func New(source string) (*Interpreter, error) {
 	}
 
 	// Bind the expected primitives
-
-	// These are internal functions that aren't real
-	i.RegisterBuiltin("#", comment)
-	i.RegisterBuiltin("//", comment)
-
-	// These are real primitives
 	i.RegisterBuiltin("append", appendFn)
 	i.RegisterBuiltin("break", breakFn)
 	i.RegisterBuiltin("continue", continueFn)
