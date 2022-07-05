@@ -309,11 +309,15 @@ if { $i < 10 } { puts "OK" } else { puts "FAILED"}
 		expectedType    token.Type
 		expectedLiteral string
 	}{
+		{token.NEWLINE, "\\n"},
 		{token.IDENT, "if"},
 		{token.BLOCK, " $i < 10 "},
 		{token.BLOCK, " puts \"OK\" "},
 		{token.IDENT, "else"},
 		{token.BLOCK, " puts \"FAILED\""},
+		{token.NEWLINE, "\\n"},
+		{token.NEWLINE, "\\n"},
+		{token.NEWLINE, "\\n"},
 		{token.NEWLINE, "\\n"},
 		{token.EOF, ""},
 	}

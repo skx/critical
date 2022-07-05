@@ -262,11 +262,6 @@ func (l *Lexer) skipComment() {
 
 		// if it's a newline
 		if l.ch == '\n' {
-			// skip any other newlines
-			for l.ch == '\n' {
-				l.readChar()
-			}
-
 			// and return
 			break
 		}

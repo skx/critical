@@ -28,6 +28,10 @@ func FuzzParser(f *testing.F) {
 set b ts
 $a$b "Hello"`))
 
+	// Some comments
+	f.Add([]byte(`set a pu // comment`))
+	f.Add([]byte(`set a pu// comment`))
+
 	// Known errors are listed here.
 	//
 	// The purpose of fuzzing is to find panics, or unexpected errors.
