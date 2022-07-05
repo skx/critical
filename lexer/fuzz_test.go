@@ -30,6 +30,12 @@ func FuzzLexer(f *testing.F) {
 	f.Add([]byte(`set a "steve`))
 	f.Add([]byte(`set a 10-21`))
 
+	// Comments
+	f.Add([]byte(`set a 3 // comment at end of line`))
+	f.Add([]byte(`set a 3 # comment at end of line`))
+	f.Add([]byte(`# comment at start of line`))
+	f.Add([]byte(`// comment at start of line`))
+
 	f.Fuzz(func(t *testing.T, input []byte) {
 
 		// Create a new lexer
