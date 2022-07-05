@@ -4,3 +4,7 @@ github.com/skx/critical v0.0.0-20220628035141-39970ef66946 h1:OcE/OmL0GhBIy8bnHY
 github.com/skx/critical v0.0.0-20220628035141-39970ef66946/go.mod h1:enBgnomum36QcFwWhO23LkrWH6onwFo+oUzpiR6jDPc=
 github.com/skx/critical v0.0.0-20220629183525-c739094dbc9f h1:YCYSvxtefNgT0TNvKN7p7j0ubSh/kvts16Dv8dugXvk=
 github.com/skx/critical v0.0.0-20220629183525-c739094dbc9f/go.mod h1:enBgnomum36QcFwWhO23LkrWH6onwFo+oUzpiR6jDPc=
+github.com/skx/critical v0.0.0-20220701021547-a047492f73fb h1:BwrAUA2XKwIZEJBl8GN0Um71zkLnK42MxPvfpbCMWsw=
+github.com/skx/critical v0.0.0-20220701021547-a047492f73fb/go.mod h1:enBgnomum36QcFwWhO23LkrWH6onwFo+oUzpiR6jDPc=
+github.com/skx/critical v0.0.0-20220702064054-3fb19195fca5 h1:WO2Rk8KXJ+2dHV1lb8umkvU9lxXGDS6jS8d2nSg0V3g=
+github.com/skx/critical v0.0.0-20220702064054-3fb19195fca5/go.mod h1:enBgnomum36QcFwWhO23LkrWH6onwFo+oUzpiR6jDPc=
