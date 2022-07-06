@@ -21,6 +21,7 @@ import (
 	"os"
 
 	"github.com/skx/critical/interpreter"
+	"github.com/skx/critical/stdlib"
 )
 
 // Our embedded interpreter.
@@ -39,12 +40,18 @@ func main() {
 		return
 	}
 
+	// Read our standard library
+	stdlib := stdlib.Contents()
+
 	// Read the file the user wanted
 	data, err := ioutil.ReadFile(os.Args[1])
 	if err != nil {
 		fmt.Printf("error reading file %s:%s\n", os.Args[0], err)
 		return
 	}
+
+	// Join the standard library and the users' program
+	src := string(stdlib) + "\n\n" + string(data)
 
 	// New PNG image - with white background
 	i := image.NewRGBA(image.Rect(0, 0, 300, 300))
@@ -58,7 +65,7 @@ func main() {
 
 	// Create the interpreter instance
 	fmt.Printf("Running script\n")
-	e, err = interpreter.New(string(data))
+	e, err = interpreter.New(src)
 	if err != nil {
 		fmt.Printf("Error creating interpreter: %s\n", err)
 		return

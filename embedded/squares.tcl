@@ -19,13 +19,13 @@ pen 1
 set count 25
 
 // Loop $count times
-for { set i 0 } { expr [set i] <= [set count] } { incr i } {
+for { set i 0 } { <= [set i] [set count] } { incr i } {
 
     // Draw a square in the middle, of width/size 65
     draw_square 150 150 65
 
     // Turn so that we complete a circle, or an approximation of one
-    turn [expr 360 / [set count]]
+    turn [/ 360 [set count]]
 }
 
 // Save the `.PNG` and `.GIF` files

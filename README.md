@@ -70,8 +70,6 @@ You'll find an example of doing that beneath the [embedded/](embedded/) director
 
 * [Embedding the criTiCaL interpreter](embedded/)
 
-> **Note** that the embedded example does not load the standard-library, but of course it could be updated to do so.
-
 
 
 ## Examples
