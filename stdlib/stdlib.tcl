@@ -122,7 +122,7 @@ proc repeat {n body} {
         decr n
         set res [$body]
     }
-    $res
+    "$res"
 }
 
 
@@ -169,5 +169,5 @@ proc loop {var min max bdy} {
     }
 
     // return the last result
-    $res
+    "$res"
 }
