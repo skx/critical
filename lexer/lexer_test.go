@@ -39,7 +39,7 @@ func TestEmpty(t *testing.T) {
 
 // TestVariable does simple variable testing.
 func TestVariable(t *testing.T) {
-	input := `$a+$b // Comment goes here`
+	input := `$a+$b`
 
 	tests := []struct {
 		expectedType    token.Type
