@@ -242,17 +242,21 @@ func (i *Interpreter) Evaluate() (string, error) {
 		// doesn't exist as a function - either in golang, or
 		// user-defined.
 		//
-		// If the input was a literal string then we'll return
-		// that
+		// If the input was a literal string, number, or variable
+		// to be expanded then we set our return value to that.
+		//
 		if cmd.Command.Type == token.STRING {
-			return cmd.Command.Literal, nil
+			out = cmd.Command.Literal
+			continue
 		}
 		if cmd.Command.Type == token.NUMBER {
-			return cmd.Command.Literal, nil
+			out = cmd.Command.Literal
+			continue
 		}
 		if cmd.Command.Type == token.VARIABLE {
 			// The actual literal will have been updated
-			return i.expandString(cmd.Command.Literal), nil
+			out = i.expandString(cmd.Command.Literal)
+			continue
 		}
 
 		//
