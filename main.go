@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"os"
 
 	"github.com/skx/critical/interpreter"
@@ -33,7 +32,7 @@ func main() {
 	stdlib := stdlib.Contents()
 
 	// Read the file the user wanted
-	data, err := ioutil.ReadFile(flag.Args()[0])
+	data, err := os.ReadFile(flag.Args()[0])
 	if err != nil {
 		fmt.Printf("error reading file %s:%s\n", os.Args[0], err)
 		return
