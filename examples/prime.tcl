@@ -10,7 +10,7 @@ proc is_prime {x} {
 
     // Less than two?  Not a prime
     if {< $x 2} {
-        return "0"
+        return 0
     }
 
     // Search from N->X
@@ -23,10 +23,10 @@ proc is_prime {x} {
     //
     for { set n 2} { < [set n] [set x] } { incr n } {
         if { == [expr $x % $n] 0 } {
-            return "0"
+            return 0
         }
     }
-    return "1"
+    return 1
 }
 
 for {set i 0 } { <= [set i] 30 } { incr i } {
