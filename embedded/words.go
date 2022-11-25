@@ -1,4 +1,4 @@
-// Implementation of words exported to FORTH.
+// Implementation of words exported to TCL.
 
 package main
 
